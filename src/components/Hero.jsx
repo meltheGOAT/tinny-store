@@ -1,14 +1,14 @@
-import React from 'react';
-import { ArrowRight, Sparkles } from 'lucide-react';
-import { useStore } from '../context/StoreContext';
+import React from "react";
+import { ArrowRight, Sparkles } from "lucide-react";
+import { useStore } from "../context/StoreContext";
 
 export default function Hero() {
   const { setCurrentRoute, setActiveCategory } = useStore();
 
   const handleShopDrop = () => {
-    setCurrentRoute('shop');
-    setActiveCategory('all');
-    window.scrollTo({ top: 0, behavior: 'smooth' });
+    setCurrentRoute("shop");
+    setActiveCategory("all");
+    window.scrollTo({ top: 0, behavior: "smooth" });
   };
 
   return (
@@ -16,22 +16,24 @@ export default function Hero() {
       <div
         className="hero-banner-frame"
         style={{
-          backgroundImage: `url('https://images.unsplash.com/photo-1509631179647-0177331693ae?auto=format&fit=crop&w=2200&q=90')`
+          backgroundImage: `url('https://images.unsplash.com/photo-1509631179647-0177331693ae?auto=format&fit=crop&w=2200&q=90')`,
         }}
       >
         <div className="hero-banner-overlay"></div>
         <div className="hero-banner-content">
           <div className="hero-tagline-badge">
-            <Sparkles size={11} style={{ color: 'var(--accent-gold)' }} />
+            <Sparkles size={11} style={{ color: "var(--accent-gold)" }} />
             <span>SPRING / SUMMER 2026 • ABUJA</span>
           </div>
 
           <h1 className="hero-headline">
-            THE WORLD<br />IS YOURS
+            <span className="hero-headline-primary">Timeless Style.</span>
+            <span className="hero-headline-cursive">Modern You</span>
           </h1>
 
           <p className="hero-desc-text">
-            Bespoke African luxury streetwear. Handcrafted in Maitama atelier with Free Same-Day Delivery in Abuja.
+            From everyday essentials to statement pieces, discover quality
+            pieces from brands that help you express your individuality.
           </p>
 
           <div className="hero-buttons-row">
@@ -39,8 +41,8 @@ export default function Hero() {
               <span>Explore Collection</span>
               <ArrowRight size={14} />
             </button>
-            <a 
-              href="#lookbook-section" 
+            <a
+              href="#lookbook-section"
               className="btn btn-secondary hero-lookbook-btn"
             >
               <span>View Lookbook</span>

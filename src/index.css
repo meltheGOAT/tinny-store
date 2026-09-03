@@ -1,5 +1,5 @@
 /* ==========================================================================
-   TINNY — "The World Is Yours" | Abuja Flagship Boutique
+   TINNY — "Timeless Style. Modern You" | Abuja Flagship Boutique
    Ashluxe-Inspired High Fashion Aesthetics • Rich Imagery • Minimalist Text
    Pure White Canvas • Fluid Edge-to-Edge Grid • Apple Fluid Motion
    ========================================================================== */
@@ -10,6 +10,8 @@
   --font-display: 'DM Sans', -apple-system, sans-serif;
   --font-body: 'Karla', 'DM Sans', -apple-system, sans-serif;
   --font-mono: 'JetBrains Mono', 'SF Mono', monospace;
+  --font-serif: 'Cormorant Garamond', 'Playfair Display', Georgia, serif;
+  --font-cursive: 'Alex Brush', 'Pinyon Script', cursive;
 
   /* Palette — Pure White Canvas & Crisp Obsidian */
   --bg-primary: #ffffff;
@@ -338,7 +340,26 @@ img { display: block; max-width: 100%; }
   font-size: clamp(2.4rem, 5.5vw, 4.2rem);
   font-weight: 900; letter-spacing: -0.02em;
   color: #ffffff; line-height: 1.05;
-  margin-bottom: 0.85rem; text-transform: uppercase;
+  margin-bottom: 0.85rem; text-transform: none;
+  display: flex; flex-direction: column; gap: 0.1em;
+}
+.hero-headline-primary {
+  font-family: var(--font-serif);
+  font-weight: 700;
+  font-style: italic;
+  letter-spacing: 0.02em;
+  text-transform: none;
+  font-size: inherit;
+  line-height: 1.1;
+}
+.hero-headline-cursive {
+  font-family: var(--font-cursive);
+  font-weight: 400;
+  font-size: 1.15em;
+  letter-spacing: 0.01em;
+  text-transform: none;
+  line-height: 1;
+  color: var(--accent-gold);
 }
 .hero-desc-text {
   font-size: 0.95rem; color: rgba(255,255,255,0.9);

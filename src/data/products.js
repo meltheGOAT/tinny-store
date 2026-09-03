@@ -1,4 +1,4 @@
-// Authentic TINNY Store Catalog — "The World Is Yours"
+// Authentic TINNY Store Catalog — "Timeless Style. Modern You"
 // Ashluxe-Inspired High Fashion Streetwear & Performance Apparel
 
 export const PRODUCTS = [
@@ -66,7 +66,7 @@ export const PRODUCTS = [
   {
     id: 'zttw-03',
     sku: 'TNY-TEE-003',
-    title: 'Tinny "The World Is Yours" Heavyweight Tee',
+    title: 'Tinny "Timeless Style. Modern You" Heavyweight Tee',
     category: 'tops',
     categoryLabel: 'Shirts & Tops',
     price: 145,

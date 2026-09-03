@@ -27,7 +27,7 @@ export default function Footer() {
         <div>
           <div style={{ marginBottom: '0.65rem' }}>
             <span className="tinny-logo-text" style={{ fontSize: '1.35rem' }}>TINNY</span>
-            <div className="tinny-logo-slogan" style={{ fontSize: '0.55rem' }}>The World is yours • Abuja</div>
+            <div className="tinny-logo-slogan" style={{ fontSize: '0.55rem' }}>Timeless Style. Modern You • Abuja</div>
           </div>
           <p style={{ color: 'var(--text-secondary)', fontSize: '0.82rem', marginBottom: '1.25rem', maxWidth: '320px', lineHeight: 1.55 }}>
             Abuja-based luxury streetwear & high-performance athletic apparel. Handcrafted with structural precision and heavyweight organic cottons.
@@ -147,7 +147,7 @@ export default function Footer() {
       {/* Bottom Bar */}
       <div className="footer-bottom-bar">
         <div>
-          © {new Date().getFullYear()} TINNY ABUJA. THE WORLD IS YOURS. All rights reserved.
+          © {new Date().getFullYear()} TINNY ABUJA. TIMELESS STYLE. MODERN YOU. All rights reserved.
         </div>
         <div style={{ display: 'flex', gap: '1.25rem' }}>
           <span>Free Abuja Shipping</span>

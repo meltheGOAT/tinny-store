@@ -2,7 +2,7 @@ import React from 'react';
 
 export default function AnnouncementBar() {
   const announcements = [
-    'THE WORLD IS YOURS • TINNY STORE ABUJA',
+    'TIMELESS STYLE. MODERN YOU • TINNY STORE ABUJA',
     'FREE SAME-DAY DELIVERY FOR ABUJA RESIDENTS & ENVIRONS (MAITAMA, WUSE 2, GARKI, JABI)',
     'FLAGSHIP ATELIER: MAITAMA, ABUJA, FCT',
     'AUTUMN / WINTER 2026 DROP NOW LIVE',

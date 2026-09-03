@@ -14,7 +14,7 @@ export default function CommunityGallery() {
     },
     {
       id: 2,
-      tag: '#TheWorldIsYours',
+      tag: '#TimelessStyleModernYou',
       image: 'https://images.unsplash.com/photo-1521572267360-ee0c2909d518?auto=format&fit=crop&w=800&q=85',
       category: 'tops'
     },

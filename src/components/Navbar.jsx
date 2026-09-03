@@ -68,7 +68,7 @@ export default function Navbar() {
             onClick={() => handleNavTo('storefront')}
           >
             <span className="tinny-logo-text">TINNY</span>
-            <span className="tinny-logo-slogan">The World is yours</span>
+            <span className="tinny-logo-slogan">Timeless Style. Modern You</span>
           </div>
 
           {/* Right: Actions */}
@@ -128,7 +128,7 @@ export default function Navbar() {
           <div className="mobile-nav-header">
             <div>
               <span className="tinny-logo-text" style={{ fontSize: '1.1rem' }}>TINNY</span>
-              <div className="tinny-logo-slogan" style={{ fontSize: '0.48rem' }}>The World is yours</div>
+              <div className="tinny-logo-slogan" style={{ fontSize: '0.48rem' }}>Timeless Style. Modern You</div>
             </div>
             <button className="btn-icon" onClick={() => setMobileNavOpen(false)} aria-label="Close menu">
               <X size={18} />
