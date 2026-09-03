@@ -1,17 +1,21 @@
-import React from 'react';
+import React from "react";
 
 export default function AnnouncementBar() {
   const announcements = [
-    'TIMELESS STYLE. MODERN YOU • TINNY STORE ABUJA',
-    'FREE SAME-DAY DELIVERY FOR ABUJA RESIDENTS & ENVIRONS (MAITAMA, WUSE 2, GARKI, JABI)',
-    'FLAGSHIP ATELIER: MAITAMA, ABUJA, FCT',
-    'AUTUMN / WINTER 2026 DROP NOW LIVE',
-    'FREE NATIONWIDE & WORLDWIDE EXPRESS OVER ₦370,000 / $250',
-    '100% AUTHENTIC ABUJA LUXURY STREETWEAR'
+    "TIMELESS STYLE. MODERN YOU • TINNY STORE ABUJA",
+    "SAME-DAY DELIVERY FOR ABUJA RESIDENTS & ENVIRONS (KUBWA, GWARIMPA, WUSE 2, JABI, MAITAMA AND MORE)",
+    "FLAGSHIP ATELIER: KUBWA, ABUJA, FCT",
+    "DISCOVER OUR NEW & LATEST COLECTION",
+    "FREE SHIPPING ON ORDERS ABOVE ₦100,000",
+    "CONVINIENT SHOPPING. FAST DELIVERY",
   ];
 
   return (
-    <div className="announcement-bar" role="region" aria-label="Store Announcement">
+    <div
+      className="announcement-bar"
+      role="region"
+      aria-label="Store Announcement"
+    >
       <div className="marquee-container">
         {[...announcements, ...announcements].map((text, idx) => (
           <span key={idx} className="marquee-item">
