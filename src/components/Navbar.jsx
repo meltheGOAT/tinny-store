@@ -1,12 +1,12 @@
 import React, { useState } from 'react';
-import { ShoppingBag, Heart, ChevronDown, Menu, X } from 'lucide-react';
+import { ShoppingBag, ChevronDown, Menu, X } from 'lucide-react';
 import { useStore } from '../context/StoreContext';
 import { CURRENCIES } from '../data/products';
 
 export default function Navbar() {
   const {
     currentRoute, setCurrentRoute,
-    cartCount, wishlist, setIsCartOpen,
+    cartCount, setIsCartOpen,
     currency, setCurrency, setActiveCategory
   } = useStore();
 
@@ -86,18 +86,6 @@ export default function Navbar() {
               </select>
               <ChevronDown size={12} className="currency-arrow" />
             </div>
-
-            <button
-              className="btn-icon"
-              style={{ position: 'relative' }}
-              title="Saved Items"
-              onClick={() => handleNavTo('shop', 'all')}
-            >
-              <Heart size={17} />
-              {wishlist.length > 0 && (
-                <span className="cart-btn-badge">{wishlist.length}</span>
-              )}
-            </button>
 
             <button
               className="btn-icon"
