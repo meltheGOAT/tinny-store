@@ -68,7 +68,7 @@ export default function Navbar() {
             onClick={() => handleNavTo('storefront')}
           >
             <span className="tinny-logo-text">TINNY</span>
-            <span className="tinny-logo-slogan">Timeless Style. Modern You</span>
+            <span className="tinny-logo-slogan desktop-only-slogan">Timeless Style. Modern You</span>
           </div>
 
           {/* Right: Actions */}

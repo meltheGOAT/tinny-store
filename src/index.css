@@ -217,8 +217,10 @@ img { display: block; max-width: 100%; }
   color: #181818; line-height: 1; text-transform: uppercase;
 }
 .tinny-logo-slogan {
-  font-size: 0.52rem; font-weight: 700; letter-spacing: 0.2em;
-  text-transform: uppercase; color: var(--accent-gold); margin-top: 2px;
+  font-family: var(--font-sans);
+  font-size: 0.5rem; font-weight: 700; letter-spacing: 0.18em;
+  text-transform: uppercase; color: var(--text-tertiary); margin-top: 1px;
+  white-space: nowrap;
 }
 
 /* Right Actions */
@@ -1487,7 +1489,8 @@ img { display: block; max-width: 100%; }
   .header-nav-list { display: none !important; }
   .hamburger-btn { display: flex; }
   .mobile-nav-overlay { display: block; }
-  .tinny-brand-center { position: static; transform: none; }
+  .tinny-brand-center { position: absolute; left: 50%; transform: translateX(-50%); }
+  .desktop-only-slogan { display: none !important; }
 }
 
 /* ==========================================================================
@@ -1500,12 +1503,13 @@ img { display: block; max-width: 100%; }
 
   .header-container { padding: 0.65rem var(--edge-padding); }
   .tinny-logo-text { font-size: 1.25rem; }
+  .desktop-only-slogan { display: none !important; }
 
   /* Hero */
-  .hero-banner-frame { min-height: 65vh; }
+  .hero-banner-frame { min-height: 72vh; }
   .hero-banner-content { padding: 0 0 2.5rem var(--edge-padding); max-width: 100%; }
-  .hero-headline { font-size: 2.1rem; }
-  .hero-desc-text { font-size: 0.84rem; }
+  .hero-headline { font-size: clamp(1.85rem, 6vw, 2.3rem); margin-bottom: 0.65rem; }
+  .hero-desc-text { font-size: 0.82rem; line-height: 1.45; max-width: 55%; margin-bottom: 1.25rem; }
 
   /* Product Grid: 2 columns */
   .products-grid { grid-template-columns: repeat(2, 1fr); gap: 1.1rem 0.8rem; }
@@ -1592,13 +1596,13 @@ img { display: block; max-width: 100%; }
   .card-badge { font-size: 0.55rem; padding: 0.15rem 0.4rem; }
   .card-heart-btn { width: 26px; height: 26px; }
 
-  .hero-banner-frame { min-height: 55vh; }
+  .hero-banner-frame { min-height: 68vh; }
   .hero-banner-content { padding: 0 0 2rem var(--edge-padding); }
-  .hero-headline { font-size: 1.7rem; }
-  .hero-desc-text { font-size: 0.78rem; margin-bottom: 1.25rem; }
+  .hero-headline { font-size: 1.75rem; margin-bottom: 0.55rem; }
+  .hero-desc-text { font-size: 0.78rem; line-height: 1.4; margin-bottom: 1.15rem; max-width: 52%; }
   .hero-tagline-badge { font-size: 0.58rem; }
-  .hero-buttons-row { gap: 0.5rem; }
-  .hero-buttons-row .btn { padding: 0.6rem 1rem; font-size: 0.68rem; }
+  .hero-buttons-row { gap: 0.45rem; }
+  .hero-buttons-row .btn { padding: 0.6rem 0.95rem; font-size: 0.68rem; }
 
   .spotlight-media-wrap { min-height: 240px; }
   .spotlight-heading { font-size: 1.35rem; }

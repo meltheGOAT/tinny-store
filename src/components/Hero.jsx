@@ -21,11 +21,6 @@ export default function Hero() {
       >
         <div className="hero-banner-overlay"></div>
         <div className="hero-banner-content">
-          <div className="hero-tagline-badge">
-            <Sparkles size={11} style={{ color: "var(--accent-gold)" }} />
-            <span>SPRING / SUMMER 2026 • ABUJA</span>
-          </div>
-
           <h1 className="hero-headline">
             <span className="hero-headline-primary">Timeless Style.</span>
             <span className="hero-headline-cursive">Modern You</span>

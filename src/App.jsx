@@ -1,23 +1,22 @@
-import React from 'react';
-import { StoreProvider } from './context/StoreContext';
-import { useStore } from './context/useStore';
-import AnnouncementBar from './components/AnnouncementBar';
-import Navbar from './components/Navbar';
-import Hero from './components/Hero';
-import BestSellers from './components/BestSellers';
-import BrandPhilosophy from './components/BrandPhilosophy';
-import CampaignShowcase from './components/CampaignShowcase';
-import CategoryBanners from './components/CategoryBanners';
-import SpotlightDrop from './components/SpotlightDrop';
-import Lookbook from './components/Lookbook';
-import BrandPillars from './components/BrandPillars';
-import CommunityGallery from './components/CommunityGallery';
-import ShopAllPage from './components/ShopAllPage';
-import AdminPortal from './components/AdminPortal';
-import CartDrawer from './components/CartDrawer';
-import QuickViewModal from './components/QuickViewModal';
-import Footer from './components/Footer';
-import Toast from './components/Toast';
+import React from "react";
+import { StoreProvider } from "./context/StoreContext";
+import { useStore } from "./context/useStore";
+import AnnouncementBar from "./components/AnnouncementBar";
+import Navbar from "./components/Navbar";
+import Hero from "./components/Hero";
+import BestSellers from "./components/BestSellers";
+import BrandPhilosophy from "./components/BrandPhilosophy";
+import CampaignShowcase from "./components/CampaignShowcase";
+import CategoryBanners from "./components/CategoryBanners";
+import SpotlightDrop from "./components/SpotlightDrop";
+import Lookbook from "./components/Lookbook";
+import CommunityGallery from "./components/CommunityGallery";
+import ShopAllPage from "./components/ShopAllPage";
+import AdminPortal from "./components/AdminPortal";
+import CartDrawer from "./components/CartDrawer";
+import QuickViewModal from "./components/QuickViewModal";
+import Footer from "./components/Footer";
+import Toast from "./components/Toast";
 
 function StorefrontApp() {
   const { currentRoute } = useStore();
@@ -27,7 +26,7 @@ function StorefrontApp() {
       <AnnouncementBar />
       <Navbar />
 
-      {currentRoute === 'storefront' && (
+      {currentRoute === "storefront" && (
         <main>
           <Hero />
           <BestSellers />
@@ -36,20 +35,17 @@ function StorefrontApp() {
           <CategoryBanners />
           <SpotlightDrop />
           <Lookbook />
-          <BrandPillars />
           <CommunityGallery />
         </main>
       )}
 
-      {currentRoute === 'shop' && (
+      {currentRoute === "shop" && (
         <main>
           <ShopAllPage />
         </main>
       )}
 
-      {currentRoute === 'admin' && (
-        <AdminPortal />
-      )}
+      {currentRoute === "admin" && <AdminPortal />}
 
       <Footer />
       <CartDrawer />
