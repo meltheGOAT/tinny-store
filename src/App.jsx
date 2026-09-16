@@ -23,8 +23,8 @@ function StorefrontApp() {
 
   return (
     <div className="store-app-root">
-      <AnnouncementBar />
-      <Navbar />
+      {currentRoute !== "admin" && <AnnouncementBar />}
+      {currentRoute !== "admin" && <Navbar />}
 
       {currentRoute === "storefront" && (
         <main>
@@ -47,7 +47,7 @@ function StorefrontApp() {
 
       {currentRoute === "admin" && <AdminPortal />}
 
-      <Footer />
+      {currentRoute !== "admin" && <Footer />}
       <CartDrawer />
       <QuickViewModal />
       <Toast />

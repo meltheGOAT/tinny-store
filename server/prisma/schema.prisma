@@ -1,0 +1,52 @@
+// TINNY Flagship Studio — Prisma Database Schema
+// Compatible with SQLite (local development) and PostgreSQL (Neon / Supabase for production)
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+model AdminUser {
+  id           String   @id @default(uuid())
+  email        String   @unique
+  passwordHash String
+  name         String   @default("TINNY Studio Master")
+  role         String   @default("Super Admin")
+  createdAt    DateTime @default(now())
+}
+
+model Product {
+  id            String   @id @default(uuid())
+  sku           String   @unique
+  title         String
+  category      String   // tops, bottoms, outerwear, shoes, headwear, accessories
+  categoryLabel String   // e.g. "Shirts & Tops", "Shoes & Slides"
+  price         Float    // Base price in Nigerian Naira (₦)
+  badge         String?  // "Limited Drop", "New Arrival", etc.
+  badgeType     String?  @default("black") // "black", "gold", "emerald", "blue"
+  rating        Float    @default(5.0)
+  reviewsCount  Int      @default(12)
+  isBestSeller  Boolean  @default(false)
+  inStock       Boolean  @default(true)
+  images        String   // JSON string of image URLs: ["url1", "url2"]
+  colors        String   // JSON string of colors: [{"name": "Pitch Black", "hex": "#111111"}]
+  sizes         String   // JSON string of sizes: ["S", "M", "L", "XL"] or ["EU 40", "EU 41"]
+  description   String?
+  details       String   // JSON string of bullet specifications: ["320GSM...", "Handcrafted..."]
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+}
+
+model OrderInquiry {
+  id            String   @id @default(uuid())
+  buyerLocation String   @default("Abuja Flagship Direct")
+  itemsSummary  String   // JSON string of cart items
+  totalNGN      Float
+  totalUSD      Float
+  status        String   @default("Direct Message Sent")
+  createdAt     DateTime @default(now())
+}

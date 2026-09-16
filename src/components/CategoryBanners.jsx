@@ -28,6 +28,13 @@ export default function CategoryBanners() {
       image: 'https://images.unsplash.com/photo-1506629082955-511b1aa562c8?auto=format&fit=crop&w=1000&q=85'
     },
     {
+      id: 'shoes',
+      title: 'Shoes & Slides',
+      subtitle: 'Calfskin Mules & Runners',
+      itemCount: '4 Styles',
+      image: 'https://images.unsplash.com/photo-1595950653106-6c9ebd614d3a?auto=format&fit=crop&w=1000&q=85'
+    },
+    {
       id: 'headwear',
       title: 'Headwear & Caps',
       subtitle: 'Structured Cavalry Twill',

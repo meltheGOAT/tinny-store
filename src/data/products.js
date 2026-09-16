@@ -303,6 +303,66 @@ export const PRODUCTS = [
       'Hand-burnished wax edges'
     ],
     inStock: true
+  },
+  {
+    id: 'zttw-09',
+    sku: 'TNY-SHOE-009',
+    title: 'Tinny Atelier Calfskin Molded Mule Slides',
+    category: 'shoes',
+    categoryLabel: 'Shoes & Slides',
+    price: 195,
+    badge: 'Limited Drop',
+    badgeType: 'gold',
+    rating: 5.0,
+    reviewsCount: 32,
+    isBestSeller: true,
+    images: [
+      'https://images.unsplash.com/photo-1595950653106-6c9ebd614d3a?auto=format&fit=crop&w=1200&q=85',
+      'https://images.unsplash.com/photo-1600185365483-26d7a4cc7519?auto=format&fit=crop&w=1200&q=85'
+    ],
+    colors: [
+      { name: 'Obsidian Black', hex: '#111111' },
+      { name: 'Warm Cream', hex: '#e8e0d5' }
+    ],
+    sizes: ['EU 40', 'EU 41', 'EU 42', 'EU 43', 'EU 44', 'EU 45'],
+    description: 'Sculptural slip-on silhouette engineered with an ergonomic cork-EVA footbed wrapped in supple Italian calfskin.',
+    details: [
+      '100% Full-grain Italian calfskin upper',
+      'Anatomical shock-absorbing footbed',
+      'Embossed TINNY Abuja atelier emblem',
+      'Durable textured rubber traction outsole'
+    ],
+    inStock: true
+  },
+  {
+    id: 'zttw-10',
+    sku: 'TNY-SHOE-010',
+    title: 'Tinny Dominion Low-Top Chunky Runner',
+    category: 'shoes',
+    categoryLabel: 'Shoes & Slides',
+    price: 290,
+    badge: 'New Arrival',
+    badgeType: 'black',
+    rating: 4.9,
+    reviewsCount: 19,
+    isBestSeller: false,
+    images: [
+      'https://images.unsplash.com/photo-1552346154-21d32810aba3?auto=format&fit=crop&w=1200&q=85',
+      'https://images.unsplash.com/photo-1539185441755-769473a23570?auto=format&fit=crop&w=1200&q=85'
+    ],
+    colors: [
+      { name: 'Bone & Slate', hex: '#cfc9bd' },
+      { name: 'Triple Black', hex: '#111111' }
+    ],
+    sizes: ['EU 39', 'EU 40', 'EU 41', 'EU 42', 'EU 43', 'EU 44', 'EU 45'],
+    description: 'Deconstructed luxury runner featuring layered suede, technical mesh, and custom dual-density EVA platform cushioning.',
+    details: [
+      'Supple suede, nappa leather and breathable mesh panels',
+      'TINNY engraved palladium lace lock',
+      'Cushioned dual-density EVA sole unit',
+      'Padded collar and moisture-wicking textile lining'
+    ],
+    inStock: true
   }
 ];
 
@@ -314,10 +374,11 @@ export const CURRENCIES = {
 };
 
 export const CATEGORIES = [
-  { id: 'all', label: 'ALL' },
-  { id: 'tops', label: 'SHIRTS & TOPS' },
-  { id: 'bottoms', label: 'BOTTOMS' },
-  { id: 'outerwear', label: 'JACKETS & HOODIES' },
-  { id: 'headwear', label: 'HEADWEAR' },
-  { id: 'accessories', label: 'BAGS & ACCESSORIES' }
+  { id: 'all', label: 'ALL', name: 'All Collections' },
+  { id: 'tops', label: 'SHIRTS & TOPS', name: 'Shirts & Tops' },
+  { id: 'bottoms', label: 'BOTTOMS', name: 'Bottoms & Shorts' },
+  { id: 'outerwear', label: 'JACKETS & HOODIES', name: 'Jackets & Hoodies' },
+  { id: 'shoes', label: 'SHOES & SLIDES', name: 'Shoes & Slides' },
+  { id: 'headwear', label: 'HEADWEAR', name: 'Headwear & Caps' },
+  { id: 'accessories', label: 'BAGS & ACCESSORIES', name: 'Bags & Accessories' }
 ];

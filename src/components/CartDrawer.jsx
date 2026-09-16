@@ -22,12 +22,16 @@ export default function CartDrawer() {
     removeFromCart,
     formatPrice,
     cartCount,
-    cartSubtotalUSD,
+    cartSubtotal,
+    cartSubtotalNGN,
     freeShippingProgress,
     remainingForFreeShipping,
     showToast,
     setCurrentRoute,
     setActiveCategory,
+    logInquiry,
+    getPriceInUSD,
+    getPriceInNGN,
   } = useStore();
 
   const handleShopAll = () => {
@@ -35,6 +39,59 @@ export default function CartDrawer() {
     setCurrentRoute("shop");
     setActiveCategory("all");
     window.scrollTo({ top: 0, behavior: "smooth" });
+  };
+
+  const handleWhatsAppCheckout = finalSubtotalNGN => {
+    if (cart.length === 0) return;
+
+    const origin = typeof window !== "undefined" ? window.location.origin : "";
+
+    const itemsSummary = cart
+      .map((item, idx) => {
+        const itemTotalNGN = getPriceInNGN(item.product.price) * item.quantity;
+        const productWebLink = origin
+          ? `${origin}/shop?product=${encodeURIComponent(item.product.id || item.product.sku)}`
+          : "";
+
+        let pieceBlock = `${idx + 1}. *${item.product.title}* (x${item.quantity})\n   • Size: ${item.size} | Color: ${item.color}\n   • Subtotal: ${formatPrice(itemTotalNGN)}`;
+        if (productWebLink) {
+          pieceBlock += `\n   • Link: ${productWebLink}`;
+        }
+        return pieceBlock;
+      })
+      .join("\n\n");
+
+    const promoInfo = appliedPromo
+      ? `\n\n*VIP Promo Applied:* ${appliedPromo.code} (-${appliedPromo.percent}%)`
+      : "";
+
+    const message = `✨ *NEW ORDER — TINNY ABUJA* ✨\n────────────────────────\n${itemsSummary}${promoInfo}\n────────────────────────\n*Total:* ${formatPrice(finalSubtotalNGN)}\n*Delivery Area:* Free Same-Day Dispatch (Abuja & Environs)\n\nHi TINNY Atelier, I would like to confirm and complete this order!`;
+
+    // Log inquiry to Admin Studio & Express Backend
+    logInquiry({
+      buyerLocation: "Abuja Flagship Direct",
+      items: cart.map(it => ({
+        title: it.product.title,
+        size: it.size,
+        color: it.color,
+        qty: it.quantity,
+        priceNGN: getPriceInNGN(it.product.price),
+        priceUSD: Math.round(getPriceInUSD(it.product.price)),
+        productLink: origin
+          ? `${origin}/shop?product=${encodeURIComponent(it.product.id || it.product.sku)}`
+          : "",
+        image:
+          it.product.images && it.product.images[0] ? it.product.images[0] : "",
+      })),
+      totalNGN: Math.round(finalSubtotalNGN),
+      totalUSD: Math.round(finalSubtotalNGN / 1480),
+    });
+
+    showToast("Redirecting to TINNY WhatsApp Concierge...", "success");
+
+    // WhatsApp Direct Link
+    const waUrl = `https://wa.me/2348102764430?text=${encodeURIComponent(message)}`;
+    window.open(waUrl, "_blank");
   };
 
   const [promoCode, setPromoCode] = useState("");
@@ -59,11 +116,11 @@ export default function CartDrawer() {
   };
 
   const discountPercent = appliedPromo ? appliedPromo.percent : 0;
-  const discountAmountUSD =
+  const discountAmountNGN =
     discountPercent > 0
-      ? Math.round(cartSubtotalUSD * (discountPercent / 100))
+      ? Math.round(cartSubtotalNGN * (discountPercent / 100))
       : 0;
-  const finalSubtotalUSD = cartSubtotalUSD - discountAmountUSD;
+  const finalSubtotalNGN = cartSubtotalNGN - discountAmountNGN;
 
   return (
     <div
@@ -178,7 +235,7 @@ export default function CartDrawer() {
                       }}
                     >
                       <span className="cart-item-cost">
-                        {formatPrice(item.product.price * item.quantity)}
+                        {formatPrice(getPriceInNGN(item.product.price) * item.quantity)}
                       </span>
                       <button
                         className="cart-item-remove-btn"
@@ -200,7 +257,7 @@ export default function CartDrawer() {
             >
               <input
                 type="text"
-                placeholder="Discount Code (e.g. PUMP20)"
+                placeholder="PROMO CODE (e.g. PUMP20)"
                 value={promoCode}
                 onChange={e => setPromoCode(e.target.value)}
                 style={{
@@ -253,10 +310,7 @@ export default function CartDrawer() {
             >
               Explore the latest drop and select items to add to your bag.
             </p>
-            <button
-              className="btn btn-primary"
-              onClick={handleShopAll}
-            >
+            <button className="btn btn-primary" onClick={handleShopAll}>
               Shop The Drop
             </button>
           </div>
@@ -279,14 +333,14 @@ export default function CartDrawer() {
                 <span>
                   Code {appliedPromo.code} ({appliedPromo.percent}% Off)
                 </span>
-                <span>-{formatPrice(discountAmountUSD)}</span>
+                <span>-{formatPrice(discountAmountNGN)}</span>
               </div>
             )}
 
             <div className="cart-subtotal-line">
               <span>Estimated Subtotal</span>
               <span style={{ fontFamily: "var(--font-mono)" }}>
-                {formatPrice(finalSubtotalUSD)}
+                {formatPrice(finalSubtotalNGN)}
               </span>
             </div>
 
@@ -303,14 +357,11 @@ export default function CartDrawer() {
 
             <button
               className="btn btn-primary checkout-action-btn"
-              onClick={() =>
-                showToast(
-                  "Redirecting to 256-Bit Encrypted Checkout...",
-                  "success",
-                )
-              }
+              onClick={() => handleWhatsAppCheckout(finalSubtotalNGN)}
             >
-              <span>Checkout • {formatPrice(finalSubtotalUSD)}</span>
+              <span>
+                Checkout via WhatsApp • {formatPrice(finalSubtotalNGN)}
+              </span>
               <ArrowRight size={15} />
             </button>
 

@@ -7,10 +7,33 @@ yarn-error.log*
 pnpm-debug.log*
 lerna-debug.log*
 
-node_modules
-dist
-dist-ssr
+# Dependencies
+node_modules/
+server/node_modules/
+
+# Production build
+dist/
+dist-ssr/
 *.local
+
+# Environment variables & secrets
+.env
+.env.*
+*.env
+server/.env
+server/.env.*
+!.env.example
+!*.env.example
+
+# Local SQLite databases
+*.db
+*.db-journal
+server/prisma/*.db
+server/prisma/*.db-journal
+
+# Local uploads
+server/public/uploads/*
+!server/public/uploads/.gitkeep
 
 # Editor directories and files
 .vscode/*

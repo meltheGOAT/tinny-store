@@ -157,6 +157,22 @@ export default function Footer() {
             </li>
             <li>
               <button
+                onClick={() => handleCategoryNav("shoes")}
+                style={{
+                  background: "none",
+                  border: "none",
+                  font: "inherit",
+                  fontSize: "0.78rem",
+                  color: "var(--text-secondary)",
+                  cursor: "pointer",
+                  padding: 0,
+                }}
+              >
+                Shoes & Slides
+              </button>
+            </li>
+            <li>
+              <button
                 onClick={() => handleCategoryNav("headwear")}
                 style={{
                   background: "none",
@@ -284,9 +300,26 @@ export default function Footer() {
           © {new Date().getFullYear()} TINNY ABUJA. TIMELESS STYLE. MODERN YOU.
           All rights reserved.
         </div>
-        <div style={{ display: "flex", gap: "1.25rem" }}>
+        <div style={{ display: "flex", gap: "1.25rem", alignItems: "center" }}>
           <span>Privacy Policy</span>
           <span>Terms of Service</span>
+          <button
+            onClick={() => {
+              setCurrentRoute("admin");
+              window.scrollTo({ top: 0, behavior: "smooth" });
+            }}
+            style={{
+              background: "none",
+              border: "none",
+              padding: 0,
+              font: "inherit",
+              color: "var(--accent-gold-hover)",
+              cursor: "pointer",
+              fontWeight: 700,
+            }}
+          >
+            Admin Studio
+          </button>
         </div>
       </div>
     </footer>

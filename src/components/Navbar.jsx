@@ -55,6 +55,11 @@ export default function Navbar() {
                 </button>
               </li>
               <li>
+                <button className="header-nav-link" onClick={() => handleNavTo('shop', 'shoes')}>
+                  Shoes & Slides
+                </button>
+              </li>
+              <li>
                 <button className="header-nav-link" onClick={() => handleNavTo('shop', 'headwear')}>
                   Headwear
                 </button>
@@ -147,6 +152,11 @@ export default function Navbar() {
             <li>
               <button className="mobile-nav-link-item" onClick={() => handleNavTo('shop', 'outerwear')}>
                 Jackets & Hoodies
+              </button>
+            </li>
+            <li>
+              <button className="mobile-nav-link-item" onClick={() => handleNavTo('shop', 'shoes')}>
+                Shoes & Slides
               </button>
             </li>
             <li>
