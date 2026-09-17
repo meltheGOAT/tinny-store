@@ -11,9 +11,13 @@ const path = require('path');
 const app = express();
 const PORT = process.env.PORT || 5000;
 
-// CORS configuration (allow Vite frontend)
+// CORS configuration (allow Vite frontend, localhost, Vercel deployments)
 app.use(cors({
-  origin: ['http://localhost:5173', 'http://127.0.0.1:5173', process.env.CLIENT_URL].filter(Boolean),
+  origin: (origin, callback) => {
+    // Allow requests with no origin (like mobile apps, curl, server-to-server) or any matching domain
+    if (!origin) return callback(null, true);
+    callback(null, true);
+  },
   credentials: true
 }));
 
