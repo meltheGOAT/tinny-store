@@ -57,7 +57,7 @@ export default function AdminPortal() {
     adminAuth, adminLogin, adminLogout, inquiries
   } = useStore();
 
-  const API_BASE = import.meta.env.VITE_API_URL || 'http://localhost:5000/api';
+  const API_BASE = import.meta.env.VITE_API_URL || 'https://tinny-api.onrender.com/api';
   const [mediaProviderInfo, setMediaProviderInfo] = useState({ provider: 'local', status: 'ready', cloudName: null });
 
   // Auth form states

@@ -156,7 +156,7 @@ export function StoreProvider({ children }) {
   });
 
   // Express Backend API Base URL (Supports dynamic Vercel / production URL)
-  const API_BASE = import.meta.env.VITE_API_URL || 'http://localhost:5000/api';
+  const API_BASE = import.meta.env.VITE_API_URL || 'https://tinny-api.onrender.com/api';
 
   // Load products from API on mount with local fallback
   useEffect(() => {
