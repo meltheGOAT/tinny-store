@@ -120,7 +120,13 @@ export function StoreProvider({ children }) {
   const [adminAuth, setAdminAuth] = useState(() => {
     try {
       const saved = localStorage.getItem('tinny_admin_auth');
-      return saved ? JSON.parse(saved) : { isAuthenticated: false, user: null, token: null };
+      if (!saved) return { isAuthenticated: false, user: null, token: null };
+      const parsed = JSON.parse(saved);
+      if (parsed?.token && (parsed.token.includes('_local') || !parsed.token.includes('.'))) {
+        localStorage.removeItem('tinny_admin_auth');
+        return { isAuthenticated: false, user: null, token: null };
+      }
+      return parsed;
     } catch {
       return { isAuthenticated: false, user: null, token: null };
     }
@@ -235,7 +241,6 @@ export function StoreProvider({ children }) {
   const adminLogin = async (email, password) => {
     const cleanEmail = email.trim().toLowerCase();
 
-    // 1. Try real Express backend API
     try {
       const res = await fetch(`${API_BASE}/auth/login`, {
         method: 'POST',
@@ -243,8 +248,9 @@ export function StoreProvider({ children }) {
         body: JSON.stringify({ email: cleanEmail, password })
       });
 
-      if (res.ok) {
-        const data = await res.json();
+      const data = await res.json().catch(() => ({}));
+
+      if (res.ok && data.token) {
         const authData = {
           isAuthenticated: true,
           token: data.token,
@@ -253,146 +259,230 @@ export function StoreProvider({ children }) {
         setAdminAuth(authData);
         showToast('Welcome to TINNY Admin Studio (Connected to Database)', 'success');
         return { success: true };
+      } else {
+        const errorMsg = data.error || 'Invalid admin credentials.';
+        showToast(errorMsg, 'error');
+        return { success: false, message: errorMsg };
       }
     } catch (err) {
-      console.warn('Express API unavailable, attempting local credential validation:', err.message);
+      console.error('Backend auth request error:', err);
+      showToast('Could not reach backend API. Please check your internet connection.', 'error');
+      return { success: false, message: err.message };
     }
-
-    // 2. Fallback local validation
-    if (
-      (cleanEmail === 'admin@tinny.store' && password === 'tinny2026') ||
-      (cleanEmail === 'studio@tinny.com' && password === 'admin123') ||
-      (cleanEmail.includes('admin') && password.length >= 6)
-    ) {
-      const authData = {
-        isAuthenticated: true,
-        token: `jwt_tinny_${Date.now()}_local`,
-        user: { email: cleanEmail, name: 'TINNY Studio Master', role: 'Super Admin' }
-      };
-      setAdminAuth(authData);
-      showToast('Welcome back to TINNY Admin Studio', 'success');
-      return { success: true };
-    }
-
-    showToast('Invalid admin credentials. Use admin@tinny.store / tinny2026', 'error');
-    return { success: false, message: 'Invalid email or password' };
   };
 
   const adminLogout = () => {
     setAdminAuth({ isAuthenticated: false, user: null, token: null });
+    localStorage.removeItem('tinny_admin_auth');
     showToast('Signed out of Admin Studio', 'info');
   };
 
   const addProduct = async (newProduct) => {
-    // Optimistic UI update
-    setProducts(prev => [newProduct, ...prev]);
-    showToast(`Published "${newProduct.title}" to catalog`, 'success');
+    if (!adminAuth.token || adminAuth.token.includes('_local')) {
+      setAdminAuth({ isAuthenticated: false, user: null, token: null });
+      localStorage.removeItem('tinny_admin_auth');
+      showToast('Session expired or unauthorized. Please log in again to publish.', 'error');
+      return false;
+    }
 
-    // Sync to Express backend API
     try {
-      if (adminAuth.token) {
-        const res = await fetch(`${API_BASE}/products/admin`, {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-            'Authorization': `Bearer ${adminAuth.token}`
-          },
-          body: JSON.stringify(newProduct)
-        });
-        if (res.ok) {
-          const saved = await res.json();
-          setProducts(prev => prev.map(p => p.id === newProduct.id ? saved : p));
-        }
+      const res = await fetch(`${API_BASE}/products/admin`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${adminAuth.token}`
+        },
+        body: JSON.stringify(newProduct)
+      });
+
+      if (res.status === 401 || res.status === 403) {
+        setAdminAuth({ isAuthenticated: false, user: null, token: null });
+        localStorage.removeItem('tinny_admin_auth');
+        showToast('Admin session expired. Please log in again.', 'error');
+        return false;
       }
+
+      if (!res.ok) {
+        const errorData = await res.json().catch(() => ({}));
+        showToast(`Failed to publish product: ${errorData.error || res.statusText}`, 'error');
+        return false;
+      }
+
+      const saved = await res.json();
+      setProducts(prev => {
+        const next = [saved, ...prev.filter(p => p.id !== saved.id)];
+        localStorage.setItem('tinny_products', JSON.stringify(next));
+        return next;
+      });
+
+      showToast(`Published "${saved.title}" to catalog`, 'success');
+      return true;
     } catch (err) {
-      console.warn('Backend sync failed, saved in local storage:', err.message);
+      console.error('Failed to sync new product:', err);
+      showToast(`Error publishing product: ${err.message}`, 'error');
+      return false;
     }
   };
 
   const updateProduct = async (productId, updatedFields) => {
-    setProducts(prev => prev.map(p => (p.id === productId ? { ...p, ...updatedFields } : p)));
-    showToast(`Updated "${updatedFields.title || 'Product'}"`, 'success');
+    if (!adminAuth.token || adminAuth.token.includes('_local')) {
+      setAdminAuth({ isAuthenticated: false, user: null, token: null });
+      localStorage.removeItem('tinny_admin_auth');
+      showToast('Session expired. Please log in again to update.', 'error');
+      return false;
+    }
 
     try {
-      if (adminAuth.token) {
-        await fetch(`${API_BASE}/products/admin/${productId}`, {
-          method: 'PUT',
-          headers: {
-            'Content-Type': 'application/json',
-            'Authorization': `Bearer ${adminAuth.token}`
-          },
-          body: JSON.stringify(updatedFields)
-        });
+      const res = await fetch(`${API_BASE}/products/admin/${productId}`, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${adminAuth.token}`
+        },
+        body: JSON.stringify(updatedFields)
+      });
+
+      if (res.status === 401 || res.status === 403) {
+        setAdminAuth({ isAuthenticated: false, user: null, token: null });
+        localStorage.removeItem('tinny_admin_auth');
+        showToast('Admin session expired. Please log in again.', 'error');
+        return false;
       }
+
+      if (!res.ok) {
+        const errorData = await res.json().catch(() => ({}));
+        showToast(`Failed to update product: ${errorData.error || res.statusText}`, 'error');
+        return false;
+      }
+
+      const saved = await res.json();
+      setProducts(prev => {
+        const next = prev.map(p => (p.id === productId ? saved : p));
+        localStorage.setItem('tinny_products', JSON.stringify(next));
+        return next;
+      });
+
+      showToast(`Updated "${saved.title || 'Product'}"`, 'success');
+      return true;
     } catch (err) {
-      console.warn('Backend sync failed, updated locally:', err.message);
+      console.error('Failed to sync updated product:', err);
+      showToast(`Error updating product: ${err.message}`, 'error');
+      return false;
     }
   };
 
   const deleteProduct = async (productId) => {
-    const productToDelete = products.find(p => p.id === productId);
-    setProducts(prev => prev.filter(p => p.id !== productId));
-    showToast(`Removed "${productToDelete?.title || 'Product'}" from catalog`, 'info');
+    if (!adminAuth.token || adminAuth.token.includes('_local')) {
+      setAdminAuth({ isAuthenticated: false, user: null, token: null });
+      localStorage.removeItem('tinny_admin_auth');
+      showToast('Session expired. Please log in again to delete.', 'error');
+      return false;
+    }
 
     try {
-      if (adminAuth.token) {
-        await fetch(`${API_BASE}/products/admin/${productId}`, {
-          method: 'DELETE',
-          headers: {
-            'Authorization': `Bearer ${adminAuth.token}`
-          }
-        });
+      const res = await fetch(`${API_BASE}/products/admin/${productId}`, {
+        method: 'DELETE',
+        headers: {
+          'Authorization': `Bearer ${adminAuth.token}`
+        }
+      });
+
+      if (res.status === 401 || res.status === 403) {
+        setAdminAuth({ isAuthenticated: false, user: null, token: null });
+        localStorage.removeItem('tinny_admin_auth');
+        showToast('Admin session expired. Please log in again.', 'error');
+        return false;
       }
+
+      if (!res.ok) {
+        const errorData = await res.json().catch(() => ({}));
+        showToast(`Failed to remove product: ${errorData.error || res.statusText}`, 'error');
+        return false;
+      }
+
+      const productToDelete = products.find(p => p.id === productId);
+      setProducts(prev => {
+        const next = prev.filter(p => p.id !== productId);
+        localStorage.setItem('tinny_products', JSON.stringify(next));
+        return next;
+      });
+
+      showToast(`Removed "${productToDelete?.title || 'Product'}" from catalog`, 'info');
+      return true;
     } catch (err) {
-      console.warn('Backend delete sync failed, removed locally:', err.message);
+      console.error('Failed to sync product deletion:', err);
+      showToast(`Error deleting product: ${err.message}`, 'error');
+      return false;
     }
   };
 
   const toggleProductStock = async (productId) => {
-    setProducts(prev => prev.map(p => {
-      if (p.id === productId) {
-        const nextStock = !p.inStock;
-        showToast(`"${p.title}" marked as ${nextStock ? 'In Stock' : 'Sold Out'}`, 'info');
-        return { ...p, inStock: nextStock };
-      }
-      return p;
-    }));
+    const target = products.find(p => p.id === productId);
+    if (!target) return;
+    const nextStock = !target.inStock;
+
+    if (!adminAuth.token || adminAuth.token.includes('_local')) {
+      showToast('Please log in with admin credentials to toggle stock.', 'error');
+      return;
+    }
 
     try {
-      if (adminAuth.token) {
-        await fetch(`${API_BASE}/products/admin/${productId}/stock`, {
-          method: 'PATCH',
-          headers: {
-            'Authorization': `Bearer ${adminAuth.token}`
-          }
+      const res = await fetch(`${API_BASE}/products/admin/${productId}/stock`, {
+        method: 'PATCH',
+        headers: {
+          'Authorization': `Bearer ${adminAuth.token}`
+        }
+      });
+
+      if (res.ok) {
+        const updated = await res.json();
+        setProducts(prev => {
+          const next = prev.map(p => (p.id === productId ? updated : p));
+          localStorage.setItem('tinny_products', JSON.stringify(next));
+          return next;
         });
+        showToast(`"${target.title}" marked as ${nextStock ? 'In Stock' : 'Sold Out'}`, 'info');
+      } else {
+        showToast('Failed to toggle stock status on server.', 'error');
       }
     } catch (err) {
-      console.warn('Backend stock toggle failed, toggled locally:', err.message);
+      console.error('Failed to toggle stock:', err);
+      showToast(`Stock toggle error: ${err.message}`, 'error');
     }
   };
 
   const toggleProductBestSeller = async (productId) => {
-    setProducts(prev => prev.map(p => {
-      if (p.id === productId) {
-        const nextVal = !p.isBestSeller;
-        showToast(`"${p.title}" ${nextVal ? 'added to' : 'removed from'} Best Sellers`, 'info');
-        return { ...p, isBestSeller: nextVal };
-      }
-      return p;
-    }));
+    const target = products.find(p => p.id === productId);
+    if (!target) return;
+    const nextVal = !target.isBestSeller;
+
+    if (!adminAuth.token || adminAuth.token.includes('_local')) {
+      showToast('Please log in with admin credentials to toggle Best Seller.', 'error');
+      return;
+    }
 
     try {
-      if (adminAuth.token) {
-        await fetch(`${API_BASE}/products/admin/${productId}/bestseller`, {
-          method: 'PATCH',
-          headers: {
-            'Authorization': `Bearer ${adminAuth.token}`
-          }
+      const res = await fetch(`${API_BASE}/products/admin/${productId}/bestseller`, {
+        method: 'PATCH',
+        headers: {
+          'Authorization': `Bearer ${adminAuth.token}`
+        }
+      });
+
+      if (res.ok) {
+        const updated = await res.json();
+        setProducts(prev => {
+          const next = prev.map(p => (p.id === productId ? updated : p));
+          localStorage.setItem('tinny_products', JSON.stringify(next));
+          return next;
         });
+        showToast(`"${target.title}" ${nextVal ? 'added to' : 'removed from'} Best Sellers`, 'info');
+      } else {
+        showToast('Failed to toggle Best Seller on server.', 'error');
       }
     } catch (err) {
-      console.warn('Backend best-seller toggle failed, toggled locally:', err.message);
+      console.error('Failed to toggle Best Seller:', err);
+      showToast(`Best Seller toggle error: ${err.message}`, 'error');
     }
   };
 

@@ -80,14 +80,27 @@ router.get('/:id', async (req, res) => {
 // POST /api/admin/products (Protected - Create Product)
 router.post('/admin', verifyAdminToken, async (req, res) => {
   try {
-    const payload = serializeProduct(req.body);
-    const created = await prisma.product.create({
-      data: payload
-    });
+    let payload = serializeProduct(req.body);
+    let created;
+    try {
+      created = await prisma.product.create({
+        data: payload
+      });
+    } catch (createErr) {
+      if (createErr.code === 'P2002') {
+        // Unique SKU collision, append random suffix and retry
+        payload.sku = `${payload.sku}-${Math.floor(100 + Math.random() * 900)}`;
+        created = await prisma.product.create({
+          data: payload
+        });
+      } else {
+        throw createErr;
+      }
+    }
     res.status(201).json(formatProductResponse(created));
   } catch (err) {
     console.error('Error creating product:', err);
-    res.status(500).json({ error: 'Failed to publish new product to catalog.' });
+    res.status(500).json({ error: 'Failed to publish new product to catalog: ' + (err.message || err) });
   }
 });
 

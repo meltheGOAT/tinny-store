@@ -112,13 +112,14 @@ export default function AdminPortal() {
   const [newDetailText, setNewDetailText] = useState('');
 
   // Handle Admin Login submission
-  const handleLoginSubmit = (e) => {
+  const handleLoginSubmit = async (e) => {
     e.preventDefault();
     setLoginLoading(true);
-    setTimeout(() => {
-      adminLogin(loginEmail, loginPassword);
+    try {
+      await adminLogin(loginEmail, loginPassword);
+    } finally {
       setLoginLoading(false);
-    }, 400);
+    }
   };
 
   const handleFillDemoCreds = () => {
@@ -415,7 +416,7 @@ export default function AdminPortal() {
   };
 
   // Form Save
-  const handleSaveProduct = (e) => {
+  const handleSaveProduct = async (e) => {
     e.preventDefault();
     if (!productForm.title.trim()) {
       showToast('Please provide a product title', 'error');
@@ -430,12 +431,20 @@ export default function AdminPortal() {
       return;
     }
 
-    if (editingProductId) {
-      updateProduct(editingProductId, productForm);
-    } else {
-      addProduct(productForm);
+    setIsUploading(true);
+    let ok = false;
+    try {
+      if (editingProductId) {
+        ok = await updateProduct(editingProductId, productForm);
+      } else {
+        ok = await addProduct(productForm);
+      }
+      if (ok) {
+        setIsProductModalOpen(false);
+      }
+    } finally {
+      setIsUploading(false);
     }
-    setIsProductModalOpen(false);
   };
 
   // Filtered products for table
