@@ -91,20 +91,20 @@ router.post('/', verifyAdminToken, upload.any(), async (req, res) => {
       return res.status(400).json({ error: 'No image files provided for upload.' });
     }
 
-    const uploadedUrls = [];
     const host = req.get('host');
     const protocol = req.protocol;
 
-    for (const file of files) {
-      if (isCloudinaryConfigured) {
-        const cloudUrl = await uploadToCloudinary(file.buffer, file.originalname);
-        uploadedUrls.push(cloudUrl);
-      } else {
-        const localPath = saveLocally(file.buffer, file.originalname);
-        const fullLocalUrl = `${protocol}://${host}${localPath}`;
-        uploadedUrls.push(fullLocalUrl);
-      }
-    }
+    // Upload all files concurrently to prevent timeouts on multiple high-res uploads
+    const uploadedUrls = await Promise.all(
+      files.map(file => {
+        if (isCloudinaryConfigured) {
+          return uploadToCloudinary(file.buffer, file.originalname);
+        } else {
+          const localPath = saveLocally(file.buffer, file.originalname);
+          return Promise.resolve(`${protocol}://${host}${localPath}`);
+        }
+      })
+    );
 
     return res.json({
       success: true,

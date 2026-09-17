@@ -7,6 +7,19 @@ const prisma = new PrismaClient();
 
 // Helper to serialize array/object fields to JSON strings
 function serializeProduct(data) {
+  // Sanitize image URLs: never allow client-side temporary blob: URLs into the database
+  let cleanImages = [];
+  if (Array.isArray(data.images)) {
+    cleanImages = data.images.filter(img => typeof img === 'string' && !img.startsWith('blob:'));
+  } else if (typeof data.images === 'string') {
+    try {
+      const parsed = JSON.parse(data.images);
+      cleanImages = Array.isArray(parsed) ? parsed.filter(img => typeof img === 'string' && !img.startsWith('blob:')) : [];
+    } catch {
+      cleanImages = data.images.startsWith('blob:') ? [] : [data.images];
+    }
+  }
+
   return {
     sku: data.sku || `TNY-${(data.category || 'TOP').toUpperCase().slice(0, 3)}-${Date.now().toString().slice(-4)}`,
     title: data.title,
@@ -19,7 +32,7 @@ function serializeProduct(data) {
     reviewsCount: data.reviewsCount !== undefined ? parseInt(data.reviewsCount, 10) : 12,
     isBestSeller: Boolean(data.isBestSeller),
     inStock: data.inStock !== undefined ? Boolean(data.inStock) : true,
-    images: typeof data.images === 'string' ? data.images : JSON.stringify(data.images || []),
+    images: JSON.stringify(cleanImages),
     colors: typeof data.colors === 'string' ? data.colors : JSON.stringify(data.colors || []),
     sizes: typeof data.sizes === 'string' ? data.sizes : JSON.stringify(data.sizes || []),
     description: data.description || '',

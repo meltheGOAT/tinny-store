@@ -24,10 +24,7 @@ const EMPTY_PRODUCT = {
   reviewsCount: 1,
   isBestSeller: false,
   inStock: true,
-  images: [
-    'https://images.unsplash.com/photo-1521572267360-ee0c2909d518?auto=format&fit=crop&w=1200&q=85',
-    'https://images.unsplash.com/photo-1503342217505-b0a15ec3261c?auto=format&fit=crop&w=1200&q=85'
-  ],
+  images: [],
   colors: [
     { name: 'Pitch Black', hex: '#111111' },
     { name: 'Bone White', hex: '#f2eee6' }
@@ -183,90 +180,91 @@ export default function AdminPortal() {
     }
 
     setIsUploading(true);
-    setUploadProgress(20);
+    setUploadProgress(15);
 
-    // 1. Immediate client preview
-    const tempPreviews = [];
-    for (const file of validFiles) {
-      tempPreviews.push(URL.createObjectURL(file));
-    }
-    const startIndex = productForm.images.length;
+    // 1. Create immediate client previews
+    const tempPreviews = validFiles.map(file => URL.createObjectURL(file));
+
+    // Append previews into form
     setProductForm(prev => ({
       ...prev,
       images: [...prev.images, ...tempPreviews]
     }));
-    setUploadProgress(50);
+    setUploadProgress(40);
 
-    // 2. Real upload to backend API (Cloudinary or local media pipeline)
+    // 2. Upload concurrently to backend API (Cloudinary CDN)
     try {
-      if (adminAuth?.token) {
-        const formData = new FormData();
-        validFiles.forEach(file => {
-          formData.append('images', file);
-        });
-
-        const res = await fetch(`${API_BASE}/admin/upload`, {
-          method: 'POST',
-          headers: {
-            'Authorization': `Bearer ${adminAuth.token}`
-          },
-          body: formData
-        });
-
-        if (res.ok) {
-          const data = await res.json();
-          if (data.urls && data.urls.length > 0) {
-            setProductForm(prev => {
-              const updated = [...prev.images];
-              data.urls.forEach((url, i) => {
-                const targetIdx = startIndex + i;
-                if (targetIdx < updated.length) {
-                  updated[targetIdx] = url;
-                } else {
-                  updated.push(url);
-                }
-              });
-              return { ...prev, images: updated };
-            });
-            setUploadProgress(100);
-            setIsUploading(false);
-            const provText = data.provider === 'cloudinary' ? 'Cloudinary CDN' : 'TINNY Media Server';
-            showToast(`Uploaded ${data.urls.length} product image(s) to ${provText}`, 'success');
-            return;
-          }
-        }
+      if (!adminAuth?.token) {
+        showToast('Please login with admin credentials to upload images', 'error');
+        // Clean up previews
+        setProductForm(prev => ({
+          ...prev,
+          images: prev.images.filter(img => !tempPreviews.includes(img))
+        }));
+        tempPreviews.forEach(blob => URL.revokeObjectURL(blob));
+        setIsUploading(false);
+        return;
       }
-    } catch (err) {
-      console.warn('Media upload to server failed, keeping client previews:', err.message);
-    }
 
-    // 3. Fallback: convert to base64 if server upload was unavailable
-    let processed = 0;
-    const base64List = [];
-    validFiles.forEach((file, idx) => {
-      const reader = new FileReader();
-      reader.onload = (e) => {
-        base64List[idx] = e.target.result;
-        processed++;
-        setUploadProgress(Math.min(95, 50 + Math.round((processed / validFiles.length) * 45)));
-        if (processed === validFiles.length) {
+      const formData = new FormData();
+      validFiles.forEach(file => {
+        formData.append('images', file);
+      });
+
+      setUploadProgress(60);
+      const res = await fetch(`${API_BASE}/admin/upload`, {
+        method: 'POST',
+        headers: {
+          'Authorization': `Bearer ${adminAuth.token}`
+        },
+        body: formData
+      });
+
+      if (res.ok) {
+        const data = await res.json();
+        if (data.urls && data.urls.length > 0) {
+          // Replace each temporary blob URL directly with its permanent Cloudinary CDN URL
           setProductForm(prev => {
             const updated = [...prev.images];
-            base64List.forEach((b64, i) => {
-              const targetIdx = startIndex + i;
-              if (targetIdx < updated.length) {
-                updated[targetIdx] = b64;
+            tempPreviews.forEach((blobUrl, i) => {
+              const uploadedUrl = data.urls[i];
+              if (uploadedUrl) {
+                const targetIdx = updated.indexOf(blobUrl);
+                if (targetIdx !== -1) {
+                  updated[targetIdx] = uploadedUrl;
+                } else {
+                  updated.push(uploadedUrl);
+                }
               }
+              // Clean up blob URL memory
+              URL.revokeObjectURL(blobUrl);
             });
             return { ...prev, images: updated };
           });
+
           setUploadProgress(100);
           setIsUploading(false);
-          showToast(`${validFiles.length} image(s) staged for product drop`, 'info');
+          const provText = data.provider === 'cloudinary' ? 'Cloudinary CDN' : 'TINNY Media Server';
+          showToast(`Uploaded ${data.urls.length} photo(s) to ${provText}`, 'success');
+          return;
         }
-      };
-      reader.readAsDataURL(file);
-    });
+      } else {
+        const errData = await res.json().catch(() => ({}));
+        throw new Error(errData.error || 'Server rejected image upload');
+      }
+    } catch (err) {
+      console.warn('Image upload failed:', err.message);
+      showToast(`Upload failed: ${err.message}`, 'error');
+      // Clean up failed blob previews so broken URLs are not saved
+      setProductForm(prev => ({
+        ...prev,
+        images: prev.images.filter(img => !tempPreviews.includes(img))
+      }));
+      tempPreviews.forEach(blob => URL.revokeObjectURL(blob));
+    } finally {
+      setIsUploading(false);
+      setUploadProgress(100);
+    }
   };
 
   const handleDragOver = (e) => {
@@ -307,10 +305,6 @@ export default function AdminPortal() {
   };
 
   const handleRemoveImage = (indexToRemove) => {
-    if (productForm.images.length <= 1) {
-      showToast('Product must retain at least one image', 'error');
-      return;
-    }
     setProductForm(prev => ({
       ...prev,
       images: prev.images.filter((_, idx) => idx !== indexToRemove)
@@ -418,6 +412,10 @@ export default function AdminPortal() {
   // Form Save
   const handleSaveProduct = async (e) => {
     e.preventDefault();
+    if (isUploading) {
+      showToast('Please wait for photos to finish uploading before saving', 'error');
+      return;
+    }
     if (!productForm.title.trim()) {
       showToast('Please provide a product title', 'error');
       return;
@@ -427,7 +425,12 @@ export default function AdminPortal() {
       return;
     }
     if (!productForm.images || productForm.images.length === 0) {
-      showToast('Please add at least one product image', 'error');
+      showToast('Please add at least one product image before publishing', 'error');
+      return;
+    }
+    const hasUnsavedBlobs = productForm.images.some(img => typeof img === 'string' && img.startsWith('blob:'));
+    if (hasUnsavedBlobs) {
+      showToast('Some photos are still uploading or failed. Please wait or remove them before saving.', 'error');
       return;
     }
 
@@ -1582,11 +1585,12 @@ export default function AdminPortal() {
                 </button>
                 <button
                   type="submit"
+                  disabled={isUploading}
                   className="btn btn-primary"
-                  style={{ padding: '0.65rem 1.5rem' }}
+                  style={{ padding: '0.65rem 1.5rem', opacity: isUploading ? 0.7 : 1, cursor: isUploading ? 'not-allowed' : 'pointer' }}
                 >
-                  <CheckCircle2 size={15} />
-                  <span>{editingProductId ? 'Update Product' : 'Publish to Catalog'}</span>
+                  {isUploading ? <RefreshCw className="animate-spin" size={15} /> : <CheckCircle2 size={15} />}
+                  <span>{isUploading ? 'Uploading Photos...' : editingProductId ? 'Update Product' : 'Publish to Catalog'}</span>
                 </button>
               </div>
             </form>
