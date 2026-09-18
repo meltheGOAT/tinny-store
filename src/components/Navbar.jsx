@@ -35,11 +35,6 @@ export default function Navbar() {
 
             <ul className="header-nav-list">
               <li>
-                <button className="header-nav-link" onClick={() => handleNavTo('storefront')}>
-                  Home
-                </button>
-              </li>
-              <li>
                 <button className="header-nav-link" onClick={() => handleNavTo('shop', 'all')}>
                   Shop All
                 </button>
@@ -129,11 +124,6 @@ export default function Navbar() {
           </div>
 
           <ul className="mobile-nav-links">
-            <li>
-              <button className="mobile-nav-link-item" onClick={() => handleNavTo('storefront')}>
-                Home
-              </button>
-            </li>
             <li>
               <button className="mobile-nav-link-item" onClick={() => handleNavTo('shop', 'all')}>
                 Shop All

@@ -88,6 +88,8 @@ export default function AdminPortal() {
   const [isProductModalOpen, setIsProductModalOpen] = useState(false);
   const [editingProductId, setEditingProductId] = useState(null); // null = new product, string = editing
   const [productForm, setProductForm] = useState(EMPTY_PRODUCT);
+  const [productToDelete, setProductToDelete] = useState(null);
+  const [isDeleting, setIsDeleting] = useState(false);
 
   // Media uploader states
   const [isDraggingOver, setIsDraggingOver] = useState(false);
@@ -130,7 +132,8 @@ export default function AdminPortal() {
     setProductForm({
       ...EMPTY_PRODUCT,
       id: `tny-${Date.now().toString().slice(-4)}`,
-      sku: newSku
+      sku: newSku,
+      price: 185000
     });
     setEditingProductId(null);
     setUploadProgress(100);
@@ -140,7 +143,10 @@ export default function AdminPortal() {
 
   // Open modal to edit existing product
   const handleOpenEditModal = (product) => {
-    setProductForm({ ...product });
+    setProductForm({
+      ...product,
+      price: product.price ? Number(product.price) : ''
+    });
     setEditingProductId(product.id);
     setUploadProgress(100);
     setIsUploading(false);
@@ -420,7 +426,7 @@ export default function AdminPortal() {
       showToast('Please provide a product title', 'error');
       return;
     }
-    if (!productForm.price || productForm.price <= 0) {
+    if (productForm.price === '' || Number(productForm.price) <= 0) {
       showToast('Please enter a valid price', 'error');
       return;
     }
@@ -434,13 +440,18 @@ export default function AdminPortal() {
       return;
     }
 
+    const payload = {
+      ...productForm,
+      price: Number(productForm.price)
+    };
+
     setIsUploading(true);
     let ok = false;
     try {
       if (editingProductId) {
-        ok = await updateProduct(editingProductId, productForm);
+        ok = await updateProduct(editingProductId, payload);
       } else {
-        ok = await addProduct(productForm);
+        ok = await addProduct(payload);
       }
       if (ok) {
         setIsProductModalOpen(false);
@@ -896,11 +907,7 @@ export default function AdminPortal() {
                           <button
                             className="btn-icon"
                             title="Delete Product"
-                            onClick={() => {
-                              if (window.confirm(`Delete "${product.title}" from catalog?`)) {
-                                deleteProduct(product.id);
-                              }
-                            }}
+                            onClick={() => setProductToDelete(product)}
                             style={{ width: '32px', height: '32px', border: '1px solid #ffcdd2', color: '#d32f2f' }}
                           >
                             <Trash2 size={14} />
@@ -1285,17 +1292,22 @@ export default function AdminPortal() {
                       <input
                         type="number"
                         required
-                        min="1000"
-                        step="500"
-                        value={productForm.price >= 1000 ? productForm.price : productForm.price * 1480}
-                        onChange={(e) => setProductForm({ ...productForm, price: parseFloat(e.target.value) || 0 })}
+                        min="0"
+                        value={productForm.price === '' ? '' : productForm.price}
+                        onChange={(e) => {
+                          const val = e.target.value;
+                          setProductForm({
+                            ...productForm,
+                            price: val === '' ? '' : val
+                          });
+                        }}
                         placeholder="e.g. 185000"
                         className="admin-form-input"
                         style={{ paddingLeft: '1.8rem' }}
                       />
                     </div>
                     <div style={{ fontSize: '0.72rem', color: '#666', whiteSpace: 'nowrap' }}>
-                      ≈ <strong>${Math.round((productForm.price >= 1000 ? productForm.price : productForm.price * 1480) / 1480)} USD</strong>
+                      ≈ <strong>${productForm.price ? Math.round(Number(productForm.price) / 1480) : 0} USD</strong>
                     </div>
                   </div>
                 </div>
@@ -1594,6 +1606,142 @@ export default function AdminPortal() {
                 </button>
               </div>
             </form>
+          </div>
+        </div>
+      )}
+      {/* =====================================================================
+          CUSTOM LUXURY DELETE CONFIRMATION MODAL
+          ===================================================================== */}
+      {productToDelete && (
+        <div
+          className="admin-modal-overlay"
+          onClick={() => !isDeleting && setProductToDelete(null)}
+          style={{
+            position: 'fixed', inset: 0,
+            background: 'rgba(0, 0, 0, 0.75)',
+            backdropFilter: 'blur(5px)',
+            display: 'flex', alignItems: 'center', justifyContent: 'center',
+            zIndex: 9999, padding: '1rem'
+          }}
+        >
+          <div
+            className="admin-modal-card"
+            onClick={(e) => e.stopPropagation()}
+            style={{
+              background: '#ffffff',
+              borderRadius: '8px',
+              maxWidth: '480px',
+              width: '100%',
+              padding: '1.75rem',
+              boxShadow: '0 25px 50px -12px rgba(0, 0, 0, 0.25)',
+              border: '1px solid rgba(0, 0, 0, 0.08)'
+            }}
+          >
+            {/* Header with red badge */}
+            <div style={{ display: 'flex', alignItems: 'flex-start', gap: '1rem', marginBottom: '1.25rem' }}>
+              <div style={{
+                width: '46px', height: '46px', borderRadius: '50%',
+                background: '#fee2e2', color: '#dc2626',
+                display: 'flex', alignItems: 'center', justifyContent: 'center',
+                flexShrink: 0
+              }}>
+                <Trash2 size={22} />
+              </div>
+              <div style={{ flex: 1 }}>
+                <h3 style={{ fontSize: '1.15rem', fontWeight: 800, margin: 0, color: '#111827', textTransform: 'uppercase', letterSpacing: '0.02em' }}>
+                  Delete Catalog Item
+                </h3>
+                <p style={{ fontSize: '0.78rem', color: '#6b7280', margin: '0.25rem 0 0 0' }}>
+                  This piece will be permanently removed from the storefront catalog and database.
+                </p>
+              </div>
+              <button
+                type="button"
+                disabled={isDeleting}
+                onClick={() => setProductToDelete(null)}
+                style={{ background: 'none', border: 'none', color: '#9ca3af', cursor: 'pointer', padding: 0 }}
+              >
+                <X size={20} />
+              </button>
+            </div>
+
+            {/* Product Item Card Preview */}
+            <div style={{
+              display: 'flex', alignItems: 'center', gap: '0.85rem',
+              background: '#f9fafb',
+              padding: '0.85rem 1rem',
+              borderRadius: '6px',
+              border: '1px solid #e5e7eb',
+              marginBottom: '1.25rem'
+            }}>
+              {productToDelete.images && productToDelete.images[0] ? (
+                <img
+                  src={productToDelete.images[0]}
+                  alt={productToDelete.title}
+                  style={{ width: '56px', height: '56px', objectFit: 'cover', borderRadius: '4px', border: '1px solid #e5e7eb' }}
+                />
+              ) : (
+                <div style={{ width: '56px', height: '56px', background: '#e5e7eb', borderRadius: '4px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                  <ImageIcon size={22} color="#9ca3af" />
+                </div>
+              )}
+              <div style={{ flex: 1, minWidth: 0 }}>
+                <div style={{ fontSize: '0.88rem', fontWeight: 700, color: '#111827', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
+                  {productToDelete.title}
+                </div>
+                <div style={{ fontSize: '0.74rem', color: '#4b5563', marginTop: '0.2rem' }}>
+                  SKU: <strong style={{ color: '#111' }}>{productToDelete.sku || 'N/A'}</strong> • <strong style={{ color: 'var(--accent-gold-hover, #926d2e)' }}>{formatPrice(productToDelete.price)}</strong>
+                </div>
+              </div>
+            </div>
+
+            <p style={{ fontSize: '0.8rem', color: '#4b5563', lineHeight: 1.5, margin: '0 0 1.5rem 0' }}>
+              Are you sure you want to delete <strong>"{productToDelete.title}"</strong>? Customers will no longer see this piece on the storefront and direct links will be deactivated.
+            </p>
+
+            {/* Action buttons */}
+            <div style={{ display: 'flex', justifyContent: 'flex-end', gap: '0.75rem' }}>
+              <button
+                type="button"
+                disabled={isDeleting}
+                onClick={() => setProductToDelete(null)}
+                className="btn btn-secondary"
+                style={{ padding: '0.65rem 1.25rem', fontSize: '0.8rem' }}
+              >
+                Cancel
+              </button>
+              <button
+                type="button"
+                disabled={isDeleting}
+                onClick={async () => {
+                  setIsDeleting(true);
+                  try {
+                    await deleteProduct(productToDelete.id);
+                    setProductToDelete(null);
+                  } finally {
+                    setIsDeleting(false);
+                  }
+                }}
+                style={{
+                  background: '#dc2626',
+                  color: '#ffffff',
+                  border: 'none',
+                  borderRadius: '4px',
+                  padding: '0.65rem 1.4rem',
+                  fontSize: '0.8rem',
+                  fontWeight: 700,
+                  cursor: isDeleting ? 'not-allowed' : 'pointer',
+                  display: 'inline-flex',
+                  alignItems: 'center',
+                  gap: '0.45rem',
+                  opacity: isDeleting ? 0.7 : 1,
+                  boxShadow: '0 2px 8px rgba(220, 38, 38, 0.35)'
+                }}
+              >
+                {isDeleting ? <RefreshCw className="animate-spin" size={14} /> : <Trash2 size={14} />}
+                <span>{isDeleting ? 'Deleting...' : 'Yes, Delete Item'}</span>
+              </button>
+            </div>
           </div>
         </div>
       )}
