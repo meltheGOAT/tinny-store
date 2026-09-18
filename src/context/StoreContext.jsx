@@ -192,14 +192,23 @@ export function StoreProvider({ children }) {
     }
   }, [products]);
 
-  // Handle direct product link from WhatsApp (e.g. /shop?product=TNY-JKT-001 or ?product=...)
+  // Handle direct product link from WhatsApp (e.g. /shop#p=TNY-JKT-001 or ?product=...)
   useEffect(() => {
     if (typeof window === 'undefined' || !products || products.length === 0) return;
     try {
       const urlParams = new URLSearchParams(window.location.search);
       const targetParam = urlParams.get('product');
-      const hash = window.location.hash.replace(/^#product-/, '');
-      const lookup = targetParam || (hash && hash !== '#admin' && hash !== '#shop' ? hash : null);
+
+      // Support compact #p=SKU hash format (from WhatsApp links)
+      const hash = window.location.hash;
+      const hashMatch = hash.match(/^#p=(.+)$/);
+      const hashLookup = hashMatch ? decodeURIComponent(hashMatch[1]) : null;
+
+      // Legacy #product-xxx support
+      const legacyHash = hash.replace(/^#product-/, '');
+      const legacyLookup = legacyHash && legacyHash !== '#admin' && legacyHash !== '#shop' && !hashMatch ? legacyHash : null;
+
+      const lookup = targetParam || hashLookup || legacyLookup;
 
       if (lookup) {
         const match = products.find(

@@ -49,8 +49,9 @@ export default function CartDrawer() {
     const itemsSummary = cart
       .map((item, idx) => {
         const itemTotalNGN = getPriceInNGN(item.product.price) * item.quantity;
+        const shortId = item.product.sku || item.product.id;
         const productWebLink = origin
-          ? `${origin}/shop?product=${encodeURIComponent(item.product.id || item.product.sku)}`
+          ? `${origin}/shop#p=${shortId}`
           : "";
 
         let pieceBlock = `${idx + 1}. *${item.product.title}* (x${item.quantity})\n   • Size: ${item.size} | Color: ${item.color}\n   • Subtotal: ${formatPrice(itemTotalNGN)}`;
@@ -78,7 +79,7 @@ export default function CartDrawer() {
         priceNGN: getPriceInNGN(it.product.price),
         priceUSD: Math.round(getPriceInUSD(it.product.price)),
         productLink: origin
-          ? `${origin}/shop?product=${encodeURIComponent(it.product.id || it.product.sku)}`
+          ? `${origin}/shop#p=${it.product.sku || it.product.id}`
           : "",
         image:
           it.product.images && it.product.images[0] ? it.product.images[0] : "",
