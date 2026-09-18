@@ -1,6 +1,7 @@
 const express = require('express');
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
+const rateLimit = require('express-rate-limit');
 const { PrismaClient } = require('@prisma/client');
 const verifyAdminToken = require('../middleware/auth');
 
@@ -8,8 +9,21 @@ const router = express.Router();
 const prisma = new PrismaClient();
 const JWT_SECRET = process.env.JWT_SECRET || 'tinny_luxury_atelier_jwt_secret_2026_abuja';
 
+if (!process.env.JWT_SECRET && process.env.NODE_ENV === 'production') {
+  console.warn('⚠️ WARNING: JWT_SECRET is using the fallback default. Please set a strong JWT_SECRET environment variable on Render.');
+}
+
+// Strict rate limiter for admin login to prevent brute force / credential stuffing
+const loginLimiter = rateLimit({
+  windowMs: 15 * 60 * 1000, // 15 minutes
+  max: 10, // Max 10 attempts per IP per window
+  standardHeaders: true,
+  legacyHeaders: false,
+  message: { error: 'Too many login attempts from this IP. Please try again in 15 minutes.' }
+});
+
 // POST /api/auth/login
-router.post('/login', async (req, res) => {
+router.post('/login', loginLimiter, async (req, res) => {
   try {
     const { email, password } = req.body;
     if (!email || !password) {
