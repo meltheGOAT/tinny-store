@@ -528,7 +528,7 @@ export function StoreProvider({ children }) {
   const cartSubtotalNGN = cart.reduce((sum, item) => sum + (getPriceInNGN(item.product.price) * item.quantity), 0);
   const cartSubtotal = cartSubtotalNGN; // Primary base is Nigerian Naira (₦)
   const cartSubtotalUSD = Math.round(cartSubtotalNGN / 1480);
-  const freeShippingThresholdNGN = 350000; // ₦350,000 threshold for complimentary express delivery
+  const freeShippingThresholdNGN = 500000; // ₦500,000 threshold for free local delivery within Abuja
   const freeShippingProgress = Math.min(100, Math.round((cartSubtotalNGN / freeShippingThresholdNGN) * 100));
   const remainingForFreeShipping = Math.max(0, freeShippingThresholdNGN - cartSubtotalNGN);
 

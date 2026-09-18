@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React from "react";
 import {
   X,
   ShoppingBag,
@@ -7,9 +7,6 @@ import {
   Minus,
   ArrowRight,
   ShieldCheck,
-  Sparkles,
-  MapPin,
-  Tag,
 } from "lucide-react";
 import { useStore } from "../context/StoreContext";
 
@@ -50,23 +47,17 @@ export default function CartDrawer() {
       .map((item, idx) => {
         const itemTotalNGN = getPriceInNGN(item.product.price) * item.quantity;
         const shortId = item.product.sku || item.product.id;
-        const productWebLink = origin
-          ? `${origin}/shop#p=${shortId}`
-          : "";
+        const productWebLink = origin ? `${origin}/shop#p=${shortId}` : "";
 
-        let pieceBlock = `${idx + 1}. *${item.product.title}* (x${item.quantity})\n   • Size: ${item.size} | Color: ${item.color}\n   • Subtotal: ${formatPrice(itemTotalNGN)}`;
+        let pieceBlock = `${idx + 1}. *${item.product.title}* (x${item.quantity})\n   Size: ${item.size} | Color: ${item.color}\n   Subtotal: ${formatPrice(itemTotalNGN)}`;
         if (productWebLink) {
-          pieceBlock += `\n   • Link: ${productWebLink}`;
+          pieceBlock += `\n   Link: ${productWebLink}`;
         }
         return pieceBlock;
       })
       .join("\n\n");
 
-    const promoInfo = appliedPromo
-      ? `\n\n*VIP Promo Applied:* ${appliedPromo.code} (-${appliedPromo.percent}%)`
-      : "";
-
-    const message = `✨ *NEW ORDER — TINNY ABUJA* ✨\n────────────────────────\n${itemsSummary}${promoInfo}\n────────────────────────\n*Total:* ${formatPrice(finalSubtotalNGN)}\n*Delivery Area:* Free Same-Day Dispatch (Abuja & Environs)\n\nHi TINNY Atelier, I would like to confirm and complete this order!`;
+    const message = `*NEW ORDER - TINNY ABUJA*\n\n${itemsSummary}\n\n*Total:* ${formatPrice(cartSubtotalNGN)}\n*Delivery:* Free Same-Day Dispatch (Abuja & Environs)\n\nHi TINNY, I would like to confirm and complete this order.`;
 
     // Log inquiry to Admin Studio & Express Backend
     logInquiry({
@@ -84,44 +75,16 @@ export default function CartDrawer() {
         image:
           it.product.images && it.product.images[0] ? it.product.images[0] : "",
       })),
-      totalNGN: Math.round(finalSubtotalNGN),
-      totalUSD: Math.round(finalSubtotalNGN / 1480),
+      totalNGN: Math.round(cartSubtotalNGN),
+      totalUSD: Math.round(cartSubtotalNGN / 1480),
     });
 
-    showToast("Redirecting to TINNY WhatsApp Concierge...", "success");
+    showToast("Redirecting to WhatsApp...", "success");
 
     // WhatsApp Direct Link
     const waUrl = `https://wa.me/2348102764430?text=${encodeURIComponent(message)}`;
     window.open(waUrl, "_blank");
   };
-
-  const [promoCode, setPromoCode] = useState("");
-  const [appliedPromo, setAppliedPromo] = useState(null); // { code: 'PUMP20', percent: 20 }
-
-  const handleApplyPromo = e => {
-    e.preventDefault();
-    const cleanCode = promoCode.trim().toUpperCase();
-    if (cleanCode === "PUMP20") {
-      setAppliedPromo({ code: "PUMP20", percent: 20 });
-      showToast("TINNY Gym Drop Discount Applied (20% Off)", "success");
-    } else if (
-      cleanCode === "TINNY10" ||
-      cleanCode === "WORLD" ||
-      cleanCode === "ABUJA"
-    ) {
-      setAppliedPromo({ code: cleanCode, percent: 10 });
-      showToast("TINNY VIP Discount Applied (10% Off)", "success");
-    } else {
-      showToast('Invalid code. Try "PUMP20" or "TINNY10"', "error");
-    }
-  };
-
-  const discountPercent = appliedPromo ? appliedPromo.percent : 0;
-  const discountAmountNGN =
-    discountPercent > 0
-      ? Math.round(cartSubtotalNGN * (discountPercent / 100))
-      : 0;
-  const finalSubtotalNGN = cartSubtotalNGN - discountAmountNGN;
 
   return (
     <div
@@ -162,7 +125,6 @@ export default function CartDrawer() {
                 marginBottom: "0.2rem",
               }}
             >
-              <Sparkles size={13} />
               <span>
                 <strong> Same-Day Delivery</strong> for Abuja residents &
                 environs
@@ -170,13 +132,13 @@ export default function CartDrawer() {
             </div>
             {remainingForFreeShipping === 0 ? (
               <span style={{ fontSize: "0.7rem", color: "#444" }}>
-                You also qualify for <strong>FREE Global Express</strong>!
+                You qualify for <strong>FREE delivery</strong> within Abuja!
               </span>
             ) : (
               <span style={{ fontSize: "0.7rem", color: "#666" }}>
-                Worldwide delivery: Add{" "}
+                Add{" "}
                 <strong>{formatPrice(remainingForFreeShipping)}</strong> more
-                for free express
+                for free delivery within Abuja
               </span>
             )}
           </div>
@@ -236,7 +198,9 @@ export default function CartDrawer() {
                       }}
                     >
                       <span className="cart-item-cost">
-                        {formatPrice(getPriceInNGN(item.product.price) * item.quantity)}
+                        {formatPrice(
+                          getPriceInNGN(item.product.price) * item.quantity,
+                        )}
                       </span>
                       <button
                         className="cart-item-remove-btn"
@@ -251,35 +215,7 @@ export default function CartDrawer() {
               </div>
             ))}
 
-            {/* Promo Code Input */}
-            <form
-              onSubmit={handleApplyPromo}
-              style={{ display: "flex", gap: "0.4rem", marginTop: "0.4rem" }}
-            >
-              <input
-                type="text"
-                placeholder="PROMO CODE (e.g. PUMP20)"
-                value={promoCode}
-                onChange={e => setPromoCode(e.target.value)}
-                style={{
-                  flex: 1,
-                  padding: "0.55rem 0.75rem",
-                  background: "var(--bg-input)",
-                  border: "1px solid var(--border-light)",
-                  borderRadius: "var(--radius-xs)",
-                  color: "#212121",
-                  fontSize: "0.78rem",
-                  outline: "none",
-                }}
-              />
-              <button
-                type="submit"
-                className="btn btn-secondary"
-                style={{ padding: "0.55rem 0.85rem", fontSize: "0.74rem" }}
-              >
-                Apply
-              </button>
-            </form>
+
           </div>
         ) : (
           <div
@@ -320,28 +256,12 @@ export default function CartDrawer() {
         {/* Footer Checkout */}
         {cart.length > 0 && (
           <div className="cart-footer-box">
-            {appliedPromo && (
-              <div
-                style={{
-                  display: "flex",
-                  justifyContent: "space-between",
-                  marginBottom: "0.35rem",
-                  fontSize: "0.8rem",
-                  color: "var(--accent-gold-hover)",
-                  fontWeight: 700,
-                }}
-              >
-                <span>
-                  Code {appliedPromo.code} ({appliedPromo.percent}% Off)
-                </span>
-                <span>-{formatPrice(discountAmountNGN)}</span>
-              </div>
-            )}
+
 
             <div className="cart-subtotal-line">
               <span>Estimated Subtotal</span>
               <span style={{ fontFamily: "var(--font-mono)" }}>
-                {formatPrice(finalSubtotalNGN)}
+                {formatPrice(cartSubtotalNGN)}
               </span>
             </div>
 
@@ -358,10 +278,10 @@ export default function CartDrawer() {
 
             <button
               className="btn btn-primary checkout-action-btn"
-              onClick={() => handleWhatsAppCheckout(finalSubtotalNGN)}
+              onClick={() => handleWhatsAppCheckout(cartSubtotalNGN)}
             >
               <span>
-                Checkout via WhatsApp • {formatPrice(finalSubtotalNGN)}
+                Checkout via WhatsApp • {formatPrice(cartSubtotalNGN)}
               </span>
               <ArrowRight size={15} />
             </button>
