@@ -1,6 +1,7 @@
 import React from "react";
 import { ArrowRight, Sparkles } from "lucide-react";
 import { useStore } from "../context/StoreContext";
+import heroImg from "../assets/KITH LB.webp";
 
 export default function Hero() {
   const { setCurrentRoute, setActiveCategory } = useStore();
@@ -16,7 +17,7 @@ export default function Hero() {
       <div
         className="hero-banner-frame"
         style={{
-          backgroundImage: `url('https://images.unsplash.com/photo-1509631179647-0177331693ae?auto=format&fit=crop&w=2200&q=90')`,
+          backgroundImage: `url(${heroImg})`,
         }}
       >
         <div className="hero-banner-overlay"></div>

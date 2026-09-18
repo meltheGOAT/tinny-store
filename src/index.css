@@ -87,7 +87,6 @@ body {
 
 .store-app-root {
   width: 100%;
-  overflow-x: hidden;
 }
 
 h1, h2, h3, h4, h5, h6 {
@@ -152,7 +151,7 @@ img { display: block; max-width: 100%; }
   padding: 0.55rem 0;
   overflow: hidden;
   position: relative;
-  z-index: 50;
+  z-index: 39;
   width: 100%;
 }
 .marquee-container {
@@ -174,11 +173,37 @@ img { display: block; max-width: 100%; }
    HEADER & NAVIGATION — Full Width Side-to-Side
    ========================================================================== */
 .tinny-header {
-  position: sticky; top: 0; z-index: 40;
+  position: sticky; top: 0; z-index: 50;
+  background: transparent;
+  backdrop-filter: none;
+  border-bottom: 1px solid transparent;
+  width: 100%;
+  transition: background 350ms ease, border-color 350ms ease, backdrop-filter 350ms ease, box-shadow 350ms ease;
+}
+/* --- White text/icons when transparent over hero --- */
+.tinny-header:not(.header-scrolled) .header-nav-link,
+.tinny-header:not(.header-scrolled) .btn-icon,
+.tinny-header:not(.header-scrolled) .hamburger-btn,
+.tinny-header:not(.header-scrolled) .currency-dropdown,
+.tinny-header:not(.header-scrolled) .currency-arrow { color: #ffffff; }
+.tinny-header:not(.header-scrolled) .currency-dropdown {
+  background: rgba(255,255,255,0.12); border-color: rgba(255,255,255,0.25);
+}
+.tinny-header:not(.header-scrolled) .cart-btn-badge {
+  background: #ffffff; color: #181818;
+}
+.tinny-header:not(.header-scrolled) .tinny-brand-logo-img {
+  filter: brightness(0) invert(1);
+}
+.tinny-header:not(.header-scrolled) .header-nav-link::after {
+  background: #ffffff;
+}
+/* --- Solid state on scroll --- */
+.tinny-header.header-scrolled {
   background: rgba(255, 255, 255, 0.97);
   backdrop-filter: blur(16px) saturate(180%);
   border-bottom: 1px solid var(--border-light);
-  width: 100%;
+  box-shadow: 0 1px 8px rgba(0,0,0,0.04);
 }
 
 .header-container {
@@ -210,6 +235,16 @@ img { display: block; max-width: 100%; }
   display: flex; flex-direction: column; align-items: center;
   cursor: pointer; text-decoration: none;
   position: absolute; left: 50%; transform: translateX(-50%);
+}
+.tinny-brand-logo-img {
+  height: 42px;
+  width: auto;
+  object-fit: contain;
+  display: block;
+  transition: opacity var(--transition-fast);
+}
+.tinny-brand-center:hover .tinny-brand-logo-img {
+  opacity: 0.75;
 }
 .tinny-logo-text {
   font-family: var(--font-display);
@@ -307,11 +342,12 @@ img { display: block; max-width: 100%; }
   position: relative;
   width: 100%;
   overflow: hidden;
+  margin-top: -70px;
 }
 .hero-banner-frame {
   position: relative;
   width: 100%;
-  min-height: 88vh;
+  min-height: 100vh;
   background-size: cover;
   background-position: center 20%;
   display: flex;
@@ -1619,6 +1655,7 @@ img { display: block; max-width: 100%; }
   .mobile-nav-overlay { display: block; }
   .tinny-brand-center { position: absolute; left: 50%; transform: translateX(-50%); }
   .desktop-only-slogan { display: none !important; }
+  .currency-select-box { display: none !important; }
 }
 
 /* ==========================================================================
@@ -1631,10 +1668,11 @@ img { display: block; max-width: 100%; }
 
   .header-container { padding: 0.65rem var(--edge-padding); }
   .tinny-logo-text { font-size: 1.25rem; }
+  .tinny-brand-logo-img { height: 36px; }
   .desktop-only-slogan { display: none !important; }
 
   /* Hero */
-  .hero-banner-frame { min-height: 72vh; }
+  .hero-banner-frame { min-height: 72vh; background-position: 65% center; }
   .hero-banner-content { padding: 0 0 2.5rem var(--edge-padding); max-width: 100%; }
   .hero-headline { font-size: clamp(1.85rem, 6vw, 2.3rem); margin-bottom: 0.65rem; }
   .hero-desc-text { font-size: 0.82rem; line-height: 1.45; max-width: 55%; margin-bottom: 1.25rem; }
@@ -1737,6 +1775,7 @@ img { display: block; max-width: 100%; }
   .spotlight-content-wrap { padding: 1.5rem 1rem; }
 
   .tinny-logo-text { font-size: 1.1rem; letter-spacing: 0.15em; }
+  .tinny-brand-logo-img { height: 32px; }
 
   .toast { font-size: 0.72rem; padding: 0.65rem 1rem; }
   .toast-container { bottom: 12px; right: 12px; left: 12px; }
