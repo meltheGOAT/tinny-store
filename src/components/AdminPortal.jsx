@@ -1,11 +1,11 @@
 import React, { useState, useRef } from 'react';
 import {
-  LayoutDashboard, Store, PlusCircle, AlertCircle,
-  CheckCircle2, Upload, ArrowLeft, LogOut, Lock,
-  Eye, EyeOff, Search, Edit3, Trash2, Tag,
-  ShoppingBag, Flame, Sparkles, X, Check, RefreshCw,
-  SlidersHorizontal, MessageSquare, ExternalLink, ShieldCheck,
-  Image as ImageIcon, MoveLeft, MoveRight, CloudUpload, HelpCircle
+  Store, PlusCircle,
+  CheckCircle2, ArrowLeft, LogOut, Lock,
+  Eye, EyeOff, Search, Edit3, Trash2,
+  ShoppingBag, Flame, X, Check, RefreshCw,
+  MessageSquare, ExternalLink, ShieldCheck,
+  Image as ImageIcon, MoveLeft, MoveRight, CloudUpload
 } from 'lucide-react';
 import { useStore } from '../context/StoreContext';
 import { CATEGORIES } from '../data/products';
@@ -121,10 +121,8 @@ export default function AdminPortal() {
     }
   };
 
-  const handleFillDemoCreds = () => {
-    setLoginEmail('admin@tinny.store');
-    setLoginPassword('tinny2026');
-  };
+
+
 
   // Open modal to add new product
   const handleOpenAddModal = () => {
@@ -559,17 +557,6 @@ export default function AdminPortal() {
           </form>
 
           <div style={{ marginTop: '1.5rem', paddingTop: '1.25rem', borderTop: '1px solid var(--border-light)', display: 'flex', flexDirection: 'column', gap: '0.75rem', alignItems: 'center' }}>
-            <button
-              type="button"
-              onClick={handleFillDemoCreds}
-              style={{
-                background: 'none', border: 'none', cursor: 'pointer',
-                fontSize: '0.72rem', color: 'var(--accent-gold-hover)', textDecoration: 'underline', fontWeight: 700
-              }}
-            >
-              Quick Test: Auto-fill Demo Credentials (admin@tinny.store)
-            </button>
-
             <button
               type="button"
               onClick={() => { setCurrentRoute('storefront'); window.scrollTo({ top: 0, behavior: 'smooth' }); }}

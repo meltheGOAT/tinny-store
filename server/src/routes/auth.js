@@ -18,34 +18,17 @@ router.post('/login', async (req, res) => {
 
     const cleanEmail = email.trim().toLowerCase();
 
-    // Check in database
-    let admin = await prisma.adminUser.findUnique({
+    // Look up admin in the database only
+    const admin = await prisma.adminUser.findUnique({
       where: { email: cleanEmail }
     });
-
-    // Fallback auto-provisioning for official admin emails if not yet created in DB
-    const ALLOWED_ADMINS = ['admin@tinny.store', 'admin@tinny.ng', 'studio@tinny.com'];
-    if (!admin && (ALLOWED_ADMINS.includes(cleanEmail) || cleanEmail.includes('admin'))) {
-      const defaultHash = await bcrypt.hash('tinny2026', 10);
-      admin = await prisma.adminUser.create({
-        data: {
-          email: cleanEmail,
-          passwordHash: defaultHash,
-          name: 'TINNY Studio Master',
-          role: 'Super Admin'
-        }
-      });
-    }
 
     if (!admin) {
       return res.status(401).json({ error: 'Invalid admin credentials.' });
     }
 
-    let isMatch = await bcrypt.compare(password, admin.passwordHash);
-    // Allow standard admin passwords
-    if (!isMatch && (password === 'tinny2026' || password === 'tinny_admin_2026' || password === 'admin123')) {
-      isMatch = true;
-    }
+    // Verify password against the bcrypt hash stored in the database
+    const isMatch = await bcrypt.compare(password, admin.passwordHash);
     if (!isMatch) {
       return res.status(401).json({ error: 'Invalid admin password.' });
     }
