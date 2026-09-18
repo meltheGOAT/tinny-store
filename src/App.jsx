@@ -10,7 +10,6 @@ import CampaignShowcase from "./components/CampaignShowcase";
 import CategoryBanners from "./components/CategoryBanners";
 import SpotlightDrop from "./components/SpotlightDrop";
 import Lookbook from "./components/Lookbook";
-import CommunityGallery from "./components/CommunityGallery";
 import ShopAllPage from "./components/ShopAllPage";
 import AdminPortal from "./components/AdminPortal";
 import CartDrawer from "./components/CartDrawer";
@@ -23,7 +22,7 @@ function StorefrontApp() {
 
   return (
     <div className="store-app-root">
-      {currentRoute !== "admin" && <AnnouncementBar />}
+      {currentRoute === "storefront" && <AnnouncementBar />}
       {currentRoute !== "admin" && <Navbar />}
 
       {currentRoute === "storefront" && (
@@ -35,7 +34,6 @@ function StorefrontApp() {
           <CategoryBanners />
           <SpotlightDrop />
           <Lookbook />
-          <CommunityGallery />
         </main>
       )}
 

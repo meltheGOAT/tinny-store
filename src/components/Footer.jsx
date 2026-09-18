@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { ArrowRight, Globe, ShieldCheck, MapPin, Truck } from "lucide-react";
 import { useStore } from "../context/StoreContext";
+import tinnyLogo from "../assets/tinnylogo.PNG";
 
 export default function Footer() {
   const { setCurrentRoute, setActiveCategory, showToast } = useStore();
@@ -28,12 +29,39 @@ export default function Footer() {
       <div className="footer-inner-grid">
         {/* Brand Column */}
         <div>
-          <div style={{ marginBottom: "0.65rem" }}>
-            <span className="tinny-logo-text" style={{ fontSize: "1.35rem" }}>
-              TINNY
-            </span>
-            <div className="tinny-logo-slogan" style={{ fontSize: "0.55rem" }}>
-              Timeless Style. Modern You • Abuja
+          <div
+            style={{
+              display: "inline-flex",
+              alignItems: "center",
+              gap: "0.75rem",
+              marginBottom: "0.85rem",
+              cursor: "pointer",
+            }}
+            onClick={() => {
+              setCurrentRoute("storefront");
+              window.scrollTo({ top: 0, behavior: "smooth" });
+            }}
+          >
+            <img
+              src={tinnyLogo}
+              alt="TINNY"
+              style={{
+                height: "44px",
+                width: "auto",
+                objectFit: "contain",
+                display: "block",
+              }}
+            />
+            <div>
+              <span className="tinny-logo-text" style={{ fontSize: "1.35rem" }}>
+                TINNY
+              </span>
+              <div
+                className="tinny-logo-slogan"
+                style={{ fontSize: "0.55rem" }}
+              >
+                Timeless Style. Modern You • Abuja
+              </div>
             </div>
           </div>
           <p
@@ -45,9 +73,7 @@ export default function Footer() {
               lineHeight: 1.55,
             }}
           >
-            Abuja-based luxury streetwear & high-performance athletic apparel.
-            Handcrafted with structural precision and heavyweight organic
-            cottons.
+            Abuja-based luxury streetwear Boutique.
           </p>
           <div
             style={{
@@ -61,11 +87,6 @@ export default function Footer() {
               style={{ display: "flex", alignItems: "center", gap: "0.3rem" }}
             >
               <span>Same Day Delivery In Abuja </span>
-            </span>
-            <span
-              style={{ display: "flex", alignItems: "center", gap: "0.3rem" }}
-            >
-              <span>Verified Quality</span>
             </span>
           </div>
         </div>
@@ -297,29 +318,11 @@ export default function Footer() {
       {/* Bottom Bar */}
       <div className="footer-bottom-bar">
         <div>
-          © {new Date().getFullYear()} TINNY ABUJA. TIMELESS STYLE. MODERN YOU.
-          All rights reserved.
+          © {new Date().getFullYear()} BIG TINNY ABUJA. All rights reserved.
         </div>
         <div style={{ display: "flex", gap: "1.25rem", alignItems: "center" }}>
           <span>Privacy Policy</span>
           <span>Terms of Service</span>
-          <button
-            onClick={() => {
-              setCurrentRoute("admin");
-              window.scrollTo({ top: 0, behavior: "smooth" });
-            }}
-            style={{
-              background: "none",
-              border: "none",
-              padding: 0,
-              font: "inherit",
-              color: "var(--accent-gold-hover)",
-              cursor: "pointer",
-              fontWeight: 700,
-            }}
-          >
-            Admin Studio
-          </button>
         </div>
       </div>
     </footer>

@@ -34,7 +34,9 @@ export default function Navbar() {
 
   return (
     <>
-      <header className={`tinny-header ${scrolled ? "header-scrolled" : ""}`}>
+      <header
+        className={`tinny-header ${scrolled || currentRoute !== "storefront" ? "header-scrolled" : ""}`}
+      >
         <div className="header-container">
           {/* Left: Hamburger (mobile) + Desktop Nav Links */}
           <div style={{ display: "flex", alignItems: "center", gap: "0.5rem" }}>

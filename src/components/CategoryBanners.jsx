@@ -1,80 +1,84 @@
-import React from 'react';
-import { ArrowUpRight, Sparkles } from 'lucide-react';
-import { useStore } from '../context/StoreContext';
+import React from "react";
+import { ArrowUpRight } from "lucide-react";
+import { useStore } from "../context/StoreContext";
+import topsImg from "../assets/AE SHRT1.webp";
+import outerwearImg from "../assets/NIKE JACK1.avif";
+import bottomsImg from "../assets/jeans1.webp";
+import shoesImg from "../assets/shoe1.webp";
+import headwearImg from "../assets/headwear1.webp";
 
 export default function CategoryBanners() {
   const { setCurrentRoute, setActiveCategory } = useStore();
 
   const categories = [
     {
-      id: 'tops',
-      title: 'Shirts & Tops',
-      subtitle: 'Heavyweight Cotton & Crochet',
-      itemCount: '12 Styles',
-      image: 'https://images.unsplash.com/photo-1521572267360-ee0c2909d518?auto=format&fit=crop&w=1000&q=85'
+      id: "tops",
+      title: "Shirts & Tops",
+      subtitle: "Heavyweight Cotton & Crochet",
+      image: topsImg,
     },
     {
-      id: 'outerwear',
-      title: 'Jackets & Hoodies',
-      subtitle: 'Double-Knit & Bouclé',
-      itemCount: '8 Styles',
-      image: 'https://images.unsplash.com/photo-1556905055-8f358a7a47b2?auto=format&fit=crop&w=1000&q=85'
+      id: "outerwear",
+      title: "Jackets & Hoodies",
+      subtitle: "Double-Knit & Bouclé",
+
+      image: outerwearImg,
     },
     {
-      id: 'bottoms',
-      title: 'Bottoms & Shorts',
-      subtitle: 'Pinched Pleat Tapers',
-      itemCount: '6 Styles',
-      image: 'https://images.unsplash.com/photo-1506629082955-511b1aa562c8?auto=format&fit=crop&w=1000&q=85'
+      id: "bottoms",
+      title: "Bottoms & Shorts",
+      subtitle: "Pinched Pleat Tapers",
+
+      image: bottomsImg,
     },
     {
-      id: 'shoes',
-      title: 'Shoes & Slides',
-      subtitle: 'Calfskin Mules & Runners',
-      itemCount: '4 Styles',
-      image: 'https://images.unsplash.com/photo-1595950653106-6c9ebd614d3a?auto=format&fit=crop&w=1000&q=85'
+      id: "shoes",
+      title: "Shoes & Slides",
+      subtitle: "Calfskin Mules & Runners",
+
+      image: shoesImg,
     },
     {
-      id: 'headwear',
-      title: 'Headwear & Caps',
-      subtitle: 'Structured Cavalry Twill',
-      itemCount: '5 Styles',
-      image: 'https://images.unsplash.com/photo-1588850561407-ed78c282e89b?auto=format&fit=crop&w=1000&q=85'
-    }
+      id: "headwear",
+      title: "Headwear & Caps",
+      subtitle: "Structured Cavalry Twill",
+
+      image: headwearImg,
+    },
   ];
 
-  const handleTileClick = (catId) => {
-    setCurrentRoute('shop');
+  const handleTileClick = catId => {
+    setCurrentRoute("shop");
     setActiveCategory(catId);
-    window.scrollTo({ top: 0, behavior: 'smooth' });
+    window.scrollTo({ top: 0, behavior: "smooth" });
   };
 
   return (
     <section className="category-banners-section">
       <div className="section-header-minimal">
         <div className="section-header-left">
-          <span className="section-eyebrow-clean">
-            <Sparkles size={12} style={{ color: 'var(--accent-gold)' }} />
-            Curated Categories
-          </span>
+          <span className="section-eyebrow-clean">Curated Categories</span>
           <h2 className="section-title-clean">EXPLORE DEPARTMENTS</h2>
         </div>
-        <button className="view-all-link-btn" onClick={() => handleTileClick('all')}>
+        <button
+          className="view-all-link-btn"
+          onClick={() => handleTileClick("all")}
+        >
           <span>View All Categories</span>
           <ArrowUpRight size={14} />
         </button>
       </div>
 
       <div className="category-banners-grid">
-        {categories.map((cat) => (
-          <div 
-            key={cat.id} 
+        {categories.map(cat => (
+          <div
+            key={cat.id}
             className="category-banner-card"
             onClick={() => handleTileClick(cat.id)}
           >
-            <img 
-              src={cat.image} 
-              alt={cat.title} 
+            <img
+              src={cat.image}
+              alt={cat.title}
               className="category-banner-img"
               loading="lazy"
             />

@@ -53,7 +53,7 @@ export default function ProductGrid() {
             <Search size={14} className="search-field-icon" />
             <input 
               type="text"
-              placeholder="Search garments..."
+              placeholder="Search"
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
               className="search-field"
@@ -89,7 +89,7 @@ export default function ProductGrid() {
           border: '1px solid var(--border-light)'
         }}>
           <Sparkles size={32} style={{ color: 'var(--accent-gold)', margin: '0 auto 1rem' }} />
-          <h3 style={{ fontSize: '1.2rem', marginBottom: '0.5rem' }}>No Garments Found</h3>
+          <h3 style={{ fontSize: '1.2rem', marginBottom: '0.5rem' }}>No Items Found</h3>
           <p style={{ color: 'var(--text-secondary)', fontSize: '0.9rem', marginBottom: '1.5rem' }}>
             Try resetting your search query or choosing another category filter.
           </p>

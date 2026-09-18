@@ -1,7 +1,7 @@
-import React from 'react';
-import { ArrowRight, Flame } from 'lucide-react';
-import { useStore } from '../context/StoreContext';
-import ProductCard from './ProductCard';
+import React from "react";
+import { ArrowRight, Flame } from "lucide-react";
+import { useStore } from "../context/StoreContext";
+import ProductCard from "./ProductCard";
 
 export default function BestSellers() {
   const { products, setCurrentRoute, setActiveCategory } = useStore();
@@ -9,9 +9,9 @@ export default function BestSellers() {
   const bestSellers = products.filter(p => p.isBestSeller);
 
   const handleViewAll = () => {
-    setCurrentRoute('shop');
-    setActiveCategory('all');
-    window.scrollTo({ top: 0, behavior: 'smooth' });
+    setCurrentRoute("shop");
+    setActiveCategory("all");
+    window.scrollTo({ top: 0, behavior: "smooth" });
   };
 
   return (
@@ -19,8 +19,8 @@ export default function BestSellers() {
       <div className="section-header-minimal">
         <div className="section-header-left">
           <span className="section-eyebrow-clean">
-            <Flame size={12} style={{ color: 'var(--accent-gold)' }} />
-            Trending In Abuja
+            <Flame size={12} style={{ color: "var(--accent-gold)" }} />
+            Trending
           </span>
           <h2 className="section-title-clean">BEST SELLERS</h2>
         </div>
