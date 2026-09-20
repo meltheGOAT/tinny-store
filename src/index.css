@@ -2648,6 +2648,10 @@ img {
     height: 36px;
   }
 
+  .hero-banner-img {
+    object-position: 70% 20%;
+  }
+
   /* Hero */
   .hero-banner-frame {
     min-height: 72vh;
