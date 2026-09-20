@@ -14,35 +14,26 @@ export default function CategoryBanners() {
     {
       id: "tops",
       title: "Shirts & Tops",
-      subtitle: "Heavyweight Cotton & Crochet",
       image: topsImg,
     },
     {
       id: "outerwear",
       title: "Jackets & Hoodies",
-      subtitle: "Double-Knit & Bouclé",
-
       image: outerwearImg,
     },
     {
       id: "bottoms",
       title: "Bottoms & Shorts",
-      subtitle: "Pinched Pleat Tapers",
-
       image: bottomsImg,
     },
     {
       id: "shoes",
       title: "Shoes & Slides",
-      subtitle: "Calfskin Mules & Runners",
-
       image: shoesImg,
     },
     {
       id: "headwear",
       title: "Headwear & Caps",
-      subtitle: "Structured Cavalry Twill",
-
       image: headwearImg,
     },
   ];

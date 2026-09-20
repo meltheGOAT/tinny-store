@@ -785,9 +785,19 @@ img {
   z-index: 3;
   border-top: 1px solid var(--border-light);
 }
-.product-card:hover .card-quick-add {
-  transform: translateY(0);
-  opacity: 1;
+@media (hover: hover) and (pointer: fine) {
+  .product-card:hover .card-quick-add {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+/* Remove Quick Add overlay on mobile and touch screens so clicking opens the product directly */
+@media (hover: none), (pointer: coarse), (max-width: 768px) {
+  .card-quick-add {
+    display: none !important;
+    pointer-events: none !important;
+  }
 }
 
 .size-btn-row {
