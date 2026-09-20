@@ -14,12 +14,14 @@ export default function Hero() {
 
   return (
     <section className="tinny-hero">
-      <div
-        className="hero-banner-frame"
-        style={{
-          backgroundImage: `url(${heroImg})`,
-        }}
-      >
+      <div className="hero-banner-frame">
+        <img
+          src={heroImg}
+          alt="TINNY hero banner"
+          className="hero-banner-img"
+          loading="eager"
+          fetchpriority="high"
+        />
         <div className="hero-banner-overlay"></div>
         <div className="hero-banner-content">
           <h1 className="hero-headline">
@@ -49,3 +51,4 @@ export default function Hero() {
     </section>
   );
 }
+

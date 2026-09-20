@@ -1,9 +1,9 @@
 import React, { useState } from 'react';
-import { Heart, ShoppingBag } from 'lucide-react';
+import { Heart } from 'lucide-react';
 import { useStore } from '../context/StoreContext';
 
 export default function ProductCard({ product }) {
-  const { formatPrice, addToCart, wishlist, toggleWishlist, setQuickViewProduct } = useStore();
+  const { formatPrice, addToCart, wishlist, toggleWishlist, openProduct } = useStore();
 
   const [selectedColor, setSelectedColor] = useState(product.colors[0]?.name || '');
   const [isHovered, setIsHovered] = useState(false);
@@ -22,7 +22,7 @@ export default function ProductCard({ product }) {
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
     >
-      <div className="card-media-wrap" onClick={() => setQuickViewProduct(product)}>
+      <div className="card-media-wrap" onClick={() => openProduct(product)}>
         <img src={activeImage} alt={product.title} className="card-img" loading="lazy" />
 
         {product.badge && (
@@ -53,7 +53,7 @@ export default function ProductCard({ product }) {
 
       <div className="card-body">
         <span className="card-cat-label">{product.categoryLabel}</span>
-        <h3 className="card-product-title" onClick={() => setQuickViewProduct(product)}>
+        <h3 className="card-product-title" onClick={() => openProduct(product)}>
           {product.title}
         </h3>
         <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>

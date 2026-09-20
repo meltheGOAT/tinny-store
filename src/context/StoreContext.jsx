@@ -2,22 +2,42 @@ import React, { useState, useEffect } from 'react';
 import { StoreContext } from './store-core';
 import { PRODUCTS, CURRENCIES } from '../data/products';
 
+function getProductKeyFromUrl() {
+  if (typeof window === 'undefined') return null;
+  const path = window.location.pathname;
+  const match = path.match(/^\/products?\/([^/?#]+)/i);
+  if (match) return decodeURIComponent(match[1]);
+
+  const hash = window.location.hash;
+  const hashMatch = hash.match(/^#p=([^/?#]+)/i);
+  if (hashMatch) return decodeURIComponent(hashMatch[1]);
+
+  const searchParams = new URLSearchParams(window.location.search);
+  const targetParam = searchParams.get('product');
+  if (targetParam) return decodeURIComponent(targetParam);
+
+  return null;
+}
+
 function getInitialRoute() {
   if (typeof window === 'undefined') return 'storefront';
   const path = window.location.pathname.toLowerCase();
   const hash = window.location.hash.toLowerCase();
   if (path === '/admin' || hash === '#admin') return 'admin';
   if (path === '/shop' || hash === '#shop') return 'shop';
+  if (path.startsWith('/product/') || path.startsWith('/products/') || hash.startsWith('#p=') || window.location.search.includes('product=')) {
+    return 'product';
+  }
   return 'storefront';
 }
 
 export function StoreProvider({ children }) {
   const [currentRoute, setCurrentRouteState] = useState(getInitialRoute);
+  const [activeProduct, setActiveProduct] = useState(null);
   const [cart, setCart] = useState([]);
   const [isCartOpen, setIsCartOpen] = useState(false);
   const [currency, setCurrency] = useState('NGN');
   const [wishlist, setWishlist] = useState(['zttw-01', 'zttw-03']);
-  const [quickViewProduct, setQuickViewProduct] = useState(null);
   const [toast, setToast] = useState({ show: false, message: '', type: 'info' });
   const [activeCategory, setActiveCategory] = useState('all');
   const [searchQuery, setSearchQuery] = useState('');
@@ -25,15 +45,56 @@ export function StoreProvider({ children }) {
 
   const setCurrentRoute = (route) => {
     setCurrentRouteState(route);
-    const path = route === 'admin' ? '/admin' : route === 'shop' ? '/shop' : '/';
+    let path = '/';
+    if (route === 'admin') path = '/admin';
+    else if (route === 'shop') path = '/shop';
+    else if (route === 'product' && activeProduct) {
+      path = `/product/${activeProduct.sku || activeProduct.id}`;
+    }
     if (window.location.pathname !== path) {
       window.history.pushState({ route }, '', path);
     }
   };
 
+  const openProduct = (productOrIdentifier) => {
+    let target = productOrIdentifier;
+    if (typeof productOrIdentifier === 'string') {
+      const found = products.find(
+        p => p.id === productOrIdentifier ||
+             p.sku?.toLowerCase() === productOrIdentifier.toLowerCase()
+      );
+      if (found) target = found;
+    }
+
+    if (target && typeof target === 'object') {
+      setActiveProduct(target);
+      setCurrentRouteState('product');
+      const targetSlug = target.sku || target.id;
+      const path = `/product/${encodeURIComponent(targetSlug)}`;
+      if (window.location.pathname !== path) {
+        window.history.pushState({ route: 'product', productId: target.id }, '', path);
+      }
+      if (typeof window !== 'undefined') {
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+      }
+    }
+  };
+
   useEffect(() => {
     const handlePopState = () => {
-      setCurrentRouteState(getInitialRoute());
+      const nextRoute = getInitialRoute();
+      setCurrentRouteState(nextRoute);
+      if (nextRoute === 'product') {
+        const key = getProductKeyFromUrl();
+        if (key && products && products.length > 0) {
+          const match = products.find(
+            p => p.id === key ||
+                 p.sku?.toLowerCase() === key.toLowerCase() ||
+                 p.title?.toLowerCase().includes(key.toLowerCase())
+          );
+          if (match) setActiveProduct(match);
+        }
+      }
     };
     window.addEventListener('popstate', handlePopState);
     return () => window.removeEventListener('popstate', handlePopState);
@@ -192,24 +253,11 @@ export function StoreProvider({ children }) {
     }
   }, [products]);
 
-  // Handle direct product link from WhatsApp (e.g. /shop#p=TNY-JKT-001 or ?product=...)
+  // Handle direct product link (e.g. /product/TNY-JKT-001, /shop#p=TNY-JKT-001 or ?product=...)
   useEffect(() => {
     if (typeof window === 'undefined' || !products || products.length === 0) return;
     try {
-      const urlParams = new URLSearchParams(window.location.search);
-      const targetParam = urlParams.get('product');
-
-      // Support compact #p=SKU hash format (from WhatsApp links)
-      const hash = window.location.hash;
-      const hashMatch = hash.match(/^#p=(.+)$/);
-      const hashLookup = hashMatch ? decodeURIComponent(hashMatch[1]) : null;
-
-      // Legacy #product-xxx support
-      const legacyHash = hash.replace(/^#product-/, '');
-      const legacyLookup = legacyHash && legacyHash !== '#admin' && legacyHash !== '#shop' && !hashMatch ? legacyHash : null;
-
-      const lookup = targetParam || hashLookup || legacyLookup;
-
+      const lookup = getProductKeyFromUrl();
       if (lookup) {
         const match = products.find(
           p => p.id === lookup || 
@@ -217,7 +265,8 @@ export function StoreProvider({ children }) {
                p.title?.toLowerCase().includes(lookup.toLowerCase())
         );
         if (match) {
-          setQuickViewProduct(match);
+          setActiveProduct(match);
+          setCurrentRouteState('product');
         }
       }
     } catch (e) {
@@ -537,7 +586,9 @@ export function StoreProvider({ children }) {
     products, cart, isCartOpen, setIsCartOpen,
     currency, setCurrency, formatPrice,
     getPriceInUSD, getPriceInNGN,
-    wishlist, toggleWishlist, quickViewProduct, setQuickViewProduct,
+    wishlist, toggleWishlist,
+    activeProduct, setActiveProduct, openProduct,
+    quickViewProduct: activeProduct, setQuickViewProduct: openProduct,
     toast, showToast, activeCategory, setActiveCategory,
     searchQuery, setSearchQuery, sortBy, setSortBy,
     addToCart, updateCartQuantity, removeFromCart,

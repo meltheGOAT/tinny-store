@@ -29,6 +29,7 @@ export default function CartDrawer() {
     logInquiry,
     getPriceInUSD,
     getPriceInNGN,
+    openProduct,
   } = useStore();
 
   const handleShopAll = () => {
@@ -47,7 +48,7 @@ export default function CartDrawer() {
       .map((item, idx) => {
         const itemTotalNGN = getPriceInNGN(item.product.price) * item.quantity;
         const shortId = item.product.sku || item.product.id;
-        const productWebLink = origin ? `${origin}/shop#p=${shortId}` : "";
+        const productWebLink = origin ? `${origin}/product/${shortId}` : "";
 
         let pieceBlock = `${idx + 1}. *${item.product.title}* (x${item.quantity})\n   Size: ${item.size} | Color: ${item.color}\n   Subtotal: ${formatPrice(itemTotalNGN)}`;
         if (productWebLink) {
@@ -70,7 +71,7 @@ export default function CartDrawer() {
         priceNGN: getPriceInNGN(it.product.price),
         priceUSD: Math.round(getPriceInUSD(it.product.price)),
         productLink: origin
-          ? `${origin}/shop#p=${it.product.sku || it.product.id}`
+          ? `${origin}/product/${it.product.sku || it.product.id}`
           : "",
         image:
           it.product.images && it.product.images[0] ? it.product.images[0] : "",
@@ -159,10 +160,24 @@ export default function CartDrawer() {
                   src={item.product.images[0]}
                   alt={item.product.title}
                   className="cart-item-thumbnail"
+                  style={{ cursor: 'pointer' }}
+                  onClick={() => {
+                    setIsCartOpen(false);
+                    openProduct(item.product);
+                  }}
                 />
 
                 <div className="cart-item-info">
-                  <h4 className="cart-item-heading">{item.product.title}</h4>
+                  <h4
+                    className="cart-item-heading"
+                    style={{ cursor: 'pointer' }}
+                    onClick={() => {
+                      setIsCartOpen(false);
+                      openProduct(item.product);
+                    }}
+                  >
+                    {item.product.title}
+                  </h4>
                   <div className="cart-item-variant">
                     {item.color} • Size {item.size}
                   </div>

@@ -7,12 +7,46 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta name="description" content="Timeless Style. Modern You | TINNY Luxury Streetwear & Apparel Boutique Store" />
     <title>TINNY — Timeless Style. Modern You</title>
+    <!-- Loading screen styles (inline for instant render) -->
+    <style>
+      #loading-screen {
+        position: fixed;
+        inset: 0;
+        z-index: 99999;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background: #000;
+      }
+      .loading-logo {
+        width: 90px;
+        height: 90px;
+        object-fit: contain;
+        animation: logo-pulse 1.8s ease-in-out infinite;
+        filter: brightness(0) invert(1);
+      }
+      @keyframes logo-pulse {
+        0%, 100% { opacity: 0.4; transform: scale(0.96); }
+        50% { opacity: 1; transform: scale(1); }
+      }
+      #loading-screen.loading-fade-out {
+        animation: loading-exit 0.6s ease-out forwards;
+      }
+      @keyframes loading-exit {
+        0% { opacity: 1; }
+        100% { opacity: 0; visibility: hidden; }
+      }
+    </style>
     <!-- Google Fonts (DM Sans, Karla, JetBrains Mono, Cormorant Garamond, Playfair Display, Pinyon Script, Alex Brush) -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Alex+Brush&family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500;1,600;1,700&family=DM+Sans:ital,opsz,wght@0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700;0,9..40,800;0,9..40,900;1,9..40,400;1,9..40,500&family=JetBrains+Mono:wght@400;600;700&family=Karla:wght@400;500;600;700&family=Pinyon+Script&family=Playfair+Display:ital,wght@0,400;0,600;0,700;0,900;1,400;1,600;1,700&display=swap" rel="stylesheet">
   </head>
   <body>
+    <!-- Loading screen: renders instantly before any JS loads -->
+    <div id="loading-screen">
+      <img src="/tinnylogo.PNG" alt="TINNY" class="loading-logo" />
+    </div>
     <div id="root"></div>
     <script type="module" src="/src/main.jsx"></script>
   </body>
