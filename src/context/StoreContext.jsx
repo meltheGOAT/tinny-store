@@ -222,12 +222,23 @@ export function StoreProvider({ children }) {
     }
   });
 
-  // Express Backend API Base URL (Supports dynamic Vercel / production URL)
-  const API_BASE = import.meta.env.VITE_API_URL || 'https://tinny-api.onrender.com/api';
+  // Express Backend API Base URL (Strictly read from environment variable)
+  const getApiBaseUrl = () => {
+    const raw = import.meta.env.VITE_API_URL;
+    if (!raw) return '';
+    const clean = raw.trim().replace(/\/+$/, '');
+    return clean.endsWith('/api') ? clean : `${clean}/api`;
+  };
+
+  const API_BASE = getApiBaseUrl();
 
   // Load products from API on mount with local fallback
   useEffect(() => {
     async function loadProductsFromApi() {
+      if (!API_BASE) {
+        console.warn('⚠️ VITE_API_URL is not defined in environment variables.');
+        return;
+      }
       try {
         const res = await fetch(`${API_BASE}/products`);
         if (res.ok) {
@@ -242,7 +253,7 @@ export function StoreProvider({ children }) {
       }
     }
     loadProductsFromApi();
-  }, []);
+  }, [API_BASE]);
 
   // Sync products to localStorage
   useEffect(() => {
@@ -298,6 +309,12 @@ export function StoreProvider({ children }) {
 
   const adminLogin = async (email, password) => {
     const cleanEmail = email.trim().toLowerCase();
+
+    if (!API_BASE) {
+      const err = 'Backend API URL (VITE_API_URL) is not set in environment variables.';
+      showToast(err, 'error');
+      return { success: false, message: err };
+    }
 
     try {
       const res = await fetch(`${API_BASE}/auth/login`, {
