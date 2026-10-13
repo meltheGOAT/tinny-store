@@ -1,0 +1,7 @@
+# Robots.txt for TINNY Abuja Flagship Boutique
+User-agent: *
+Allow: /
+Disallow: /admin
+Disallow: /api/
+
+Sitemap: https://tinny.ng/sitemap.xml

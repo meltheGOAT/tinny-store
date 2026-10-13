@@ -38,6 +38,17 @@ function StorefrontApp() {
     }
   }, []);
 
+  // Synchronize document.title per route for SEO
+  useEffect(() => {
+    if (currentRoute === 'storefront') {
+      document.title = 'TINNY — Timeless Style. Modern You | Luxury Streetwear Abuja';
+    } else if (currentRoute === 'shop') {
+      document.title = 'All Pieces & Collections — TINNY Flagship Studio';
+    } else if (currentRoute === 'admin') {
+      document.title = 'Admin Studio Master — TINNY';
+    }
+  }, [currentRoute]);
+
   return (
     <div className="store-app-root">
       {currentRoute === "storefront" && <AnnouncementBar />}
