@@ -84,6 +84,43 @@ html {
   color-scheme: light;
 }
 
+/* ===== Luxury Minimalist Custom Scrollbar ===== */
+/* W3C Standard (Firefox) */
+* {
+  scrollbar-width: thin;
+  scrollbar-color: rgba(24, 24, 24, 0.22) transparent;
+}
+
+/* WebKit Browsers (Chrome, Edge, Safari, Opera) */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background-color: rgba(24, 24, 24, 0.22);
+  border-radius: 9999px;
+  border: 1px solid transparent;
+  background-clip: padding-box;
+  transition: background-color 0.2s ease;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background-color: rgba(24, 24, 24, 0.45);
+}
+
+::-webkit-scrollbar-thumb:active {
+  background-color: var(--accent-gold, #ab8c52);
+}
+
+::-webkit-scrollbar-corner {
+  background: transparent;
+}
+
 body {
   font-family: var(--font-body);
   background-color: var(--bg-primary);
