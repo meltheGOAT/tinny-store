@@ -39,12 +39,6 @@ export default function Hero() {
               <span>Explore Collection</span>
               <ArrowRight size={14} />
             </button>
-            <a
-              href="#lookbook-section"
-              className="btn btn-secondary hero-lookbook-btn"
-            >
-              <span>View Lookbook</span>
-            </a>
           </div>
         </div>
       </div>

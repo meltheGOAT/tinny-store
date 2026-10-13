@@ -9,7 +9,7 @@ import BrandPhilosophy from "./components/BrandPhilosophy";
 import CampaignShowcase from "./components/CampaignShowcase";
 import CategoryBanners from "./components/CategoryBanners";
 import SpotlightDrop from "./components/SpotlightDrop";
-import Lookbook from "./components/Lookbook";
+
 import ShopAllPage from "./components/ShopAllPage";
 import ProductDetailPage from "./components/ProductDetailPage";
 import AdminPortal from "./components/AdminPortal";
@@ -51,7 +51,7 @@ function StorefrontApp() {
           <BrandPhilosophy />
           <CategoryBanners />
           <SpotlightDrop />
-          <Lookbook />
+
         </main>
       )}
 

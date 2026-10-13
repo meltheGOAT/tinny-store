@@ -605,17 +605,7 @@ img {
   gap: 0.85rem;
   flex-wrap: wrap;
 }
-.hero-lookbook-btn {
-  background: rgba(255, 255, 255, 0.15);
-  color: #ffffff;
-  border-color: rgba(255, 255, 255, 0.3);
-  backdrop-filter: blur(8px);
-}
-.hero-lookbook-btn:hover {
-  background: #ffffff;
-  color: #181818;
-  border-color: #ffffff;
-}
+
 
 /* ==========================================================================
    MINIMALIST SECTION HEADERS (Ashluxe Style)
@@ -1244,132 +1234,7 @@ img {
   gap: 0.75rem;
 }
 
-/* ==========================================================================
-   LOOKBOOK GALLERY (4-Column Editorial Mosaic)
-   ========================================================================== */
-.lookbook-section {
-  width: 100%;
-  padding: 0 var(--edge-padding) 5.5rem;
-}
-.lookbook-gallery-grid {
-  display: grid;
-  grid-template-columns: repeat(4, 1fr);
-  gap: 1.35rem;
-  width: 100%;
-}
-.lookbook-item-box {
-  position: relative;
-  aspect-ratio: 3 / 4;
-  overflow: hidden;
-  border-radius: var(--radius-xs);
-  cursor: pointer;
-  background: var(--bg-secondary);
-}
-.lookbook-item-img {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  transition: transform 600ms var(--ease-spring);
-}
-.lookbook-item-box:hover .lookbook-item-img {
-  transform: scale(1.05);
-}
-.lookbook-item-overlay {
-  position: absolute;
-  inset: 0;
-  background: linear-gradient(180deg, transparent 50%, rgba(0, 0, 0, 0.8) 100%);
-  display: flex;
-  flex-direction: column;
-  justify-content: flex-end;
-  padding: 1.5rem;
-  color: #ffffff;
-}
-.lookbook-item-tag {
-  font-family: var(--font-sans);
-  font-size: 0.62rem;
-  font-weight: 800;
-  text-transform: uppercase;
-  letter-spacing: 0.1em;
-  color: var(--accent-gold);
-  margin-bottom: 0.2rem;
-}
-.lookbook-item-title {
-  font-size: 1.05rem;
-  font-weight: 800;
-  color: #ffffff;
-  text-transform: uppercase;
-  line-height: 1.2;
-}
 
-/* Lookbook Coming Soon Stage */
-.lookbook-stage {
-  position: relative;
-  width: 100%;
-  border-radius: var(--radius-xs);
-  overflow: hidden;
-  background: #111111;
-}
-.lookbook-blurred-grid {
-  filter: blur(12px) brightness(0.6) saturate(120%);
-  transform: scale(1.04);
-  pointer-events: none;
-  user-select: none;
-  opacity: 0.8;
-  transition: all 400ms ease;
-}
-.lookbook-coming-soon-backdrop {
-  position: absolute;
-  inset: 0;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  background: radial-gradient(
-    circle at center,
-    rgba(0, 0, 0, 0.45) 0%,
-    rgba(0, 0, 0, 0.82) 100%
-  );
-  padding: 1.5rem;
-  z-index: 5;
-}
-.lookbook-coming-soon-card {
-  max-width: 520px;
-  width: 100%;
-  padding: 2.75rem 2.25rem;
-  background: rgba(18, 18, 18, 0.82);
-  backdrop-filter: blur(24px) saturate(180%);
-  -webkit-backdrop-filter: blur(24px) saturate(180%);
-  border: 1px solid rgba(255, 255, 255, 0.15);
-  border-radius: var(--radius-sm);
-  box-shadow:
-    0 25px 60px rgba(0, 0, 0, 0.5),
-    0 0 35px rgba(171, 140, 82, 0.15);
-  text-align: center;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 0.85rem;
-  color: #ffffff;
-}
-
-.lookbook-coming-soon-title {
-  font-family: "cursive";
-  font-size: clamp(2rem, 4.5vw, 2.75rem);
-  font-weight: 900;
-  letter-spacing: 0.22em;
-  text-transform: uppercase;
-  color: #ffffff;
-  margin: 0;
-  line-height: 1.1;
-  text-shadow: 0 4px 20px rgba(0, 0, 0, 0.5);
-}
-.lookbook-coming-soon-footer {
-  margin-top: 0.6rem;
-  display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  justify-content: center;
-  gap: 0.75rem;
-}
 
 /* ==========================================================================
    CATALOG / SHOP ALL PAGE (Full Width Edge Layout)
@@ -2596,11 +2461,7 @@ img {
     font-size: 1.85rem;
   }
 
-  /* Lookbook */
-  .lookbook-gallery-grid {
-    grid-template-columns: repeat(2, 1fr);
-    gap: 1rem;
-  }
+
 
   /* Footer */
   .footer-inner-grid {
@@ -2739,14 +2600,7 @@ img {
     font-size: 1.65rem;
   }
 
-  /* Lookbook */
-  .lookbook-section {
-    padding: 0 var(--edge-padding) 3.5rem;
-  }
-  .lookbook-gallery-grid {
-    grid-template-columns: repeat(2, 1fr);
-    gap: 0.75rem;
-  }
+
 
   /* Catalog */
   .catalog-container {
@@ -2816,10 +2670,7 @@ img {
     grid-template-columns: 1fr;
     gap: 0.75rem;
   }
-  .lookbook-gallery-grid {
-    grid-template-columns: 1fr;
-    gap: 0.75rem;
-  }
+
 
   .card-body {
     padding: 0.5rem 0 0;

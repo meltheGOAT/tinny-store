@@ -243,14 +243,6 @@ export default function Footer() {
               <span> Same-Day Delivery (Abuja)</span>
             </li>
             <li>
-              <a
-                href="#lookbook-section"
-                style={{ color: "inherit", textDecoration: "none" }}
-              >
-                Lookbook 2026
-              </a>
-            </li>
-            <li>
               <span>14-Day Boutique Exchanges</span>
             </li>
             <li>
