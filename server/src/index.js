@@ -18,10 +18,27 @@ const HOST = '0.0.0.0';
 // Trust reverse proxy (Railway, Render, AWS, Cloudflare) for client IP detection
 app.set('trust proxy', 1);
 
-// HTTP Security Headers (Helmet)
+// HTTP Security Headers (Helmet) with CSP allowing Cloudinary, Unsplash & Fonts
 app.use(helmet({
   crossOriginResourcePolicy: { policy: 'cross-origin' },
-  crossOriginEmbedderPolicy: false
+  crossOriginEmbedderPolicy: false,
+  contentSecurityPolicy: {
+    directives: {
+      defaultSrc: ["'self'"],
+      scriptSrc: ["'self'", "'unsafe-inline'"],
+      styleSrc: ["'self'", "'unsafe-inline'", 'https://fonts.googleapis.com'],
+      fontSrc: ["'self'", 'https://fonts.gstatic.com', 'data:'],
+      imgSrc: [
+        "'self'",
+        'data:',
+        'blob:',
+        'https://res.cloudinary.com',
+        'https://images.unsplash.com'
+      ],
+      connectSrc: ["'self'", 'https:', 'http:'],
+      upgradeInsecureRequests: []
+    }
+  }
 }));
 
 // Allowed frontend origins for CORS (supports ALLOWED_ORIGINS and CLIENT_URL)
