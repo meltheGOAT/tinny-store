@@ -5,7 +5,9 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
-    "build": "vite build",
+    "build": "vite build && npm --prefix server install",
+    "start": "node server/src/index.js",
+    "postinstall": "npm --prefix server install",
     "lint": "oxlint",
     "preview": "vite preview"
   },

@@ -100,7 +100,7 @@ app.use('/api/products', productRoutes);
 app.use('/api/inquiries', inquiryRoutes);
 app.use('/api/admin/upload', uploadRoutes);
 
-// If Express serves the built frontend (e.g. monorepo deployment on Railway / Render)
+// If Express serves the built frontend (monorepo fullstack deployment on Railway)
 const clientDistCandidates = [
   path.resolve(__dirname, '../../dist'),
   path.resolve(__dirname, '../dist')
@@ -108,14 +108,29 @@ const clientDistCandidates = [
 const clientDistPath = clientDistCandidates.find(p => fs.existsSync(p));
 
 if (clientDistPath) {
+  console.log(`📦 Serving compiled storefront client from: ${clientDistPath}`);
   app.use(express.static(clientDistPath));
 
-  // Catch-all route returning index.html for direct product and client routes
+  // Catch-all route returning index.html for client-side routing (/shop, /admin, /product/...)
   app.get('*', (req, res, next) => {
-    if (req.path.startsWith('/api') || req.path.startsWith('/uploads')) {
+    if (req.path.startsWith('/api') || req.path.startsWith('/uploads') || req.path === '/health') {
       return next();
     }
     res.sendFile(path.join(clientDistPath, 'index.html'));
+  });
+} else {
+  // Pure API mode fallback for root /
+  app.get('/', (req, res) => {
+    res.json({
+      status: 'online',
+      studio: 'TINNY Abuja Flagship API',
+      message: 'Backend server is running smoothly on Railway.',
+      endpoints: {
+        health: '/health',
+        products: '/api/products',
+        login: '/api/auth/login'
+      }
+    });
   });
 }
 

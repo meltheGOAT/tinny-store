@@ -55,7 +55,7 @@ export default function AdminPortal() {
   } = useStore();
 
   const rawApiUrl = import.meta.env.VITE_API_URL || '';
-  const API_BASE = rawApiUrl ? (rawApiUrl.trim().replace(/\/+$/, '').endsWith('/api') ? rawApiUrl.trim().replace(/\/+$/, '') : `${rawApiUrl.trim().replace(/\/+$/, '')}/api`) : '';
+  const API_BASE = rawApiUrl ? (rawApiUrl.trim().replace(/\/+$/, '').endsWith('/api') ? rawApiUrl.trim().replace(/\/+$/, '') : `${rawApiUrl.trim().replace(/\/+$/, '')}/api`) : '/api';
   const [mediaProviderInfo, setMediaProviderInfo] = useState({ provider: 'local', status: 'ready', cloudName: null });
 
   // Auth form states

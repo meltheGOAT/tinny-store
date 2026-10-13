@@ -222,10 +222,10 @@ export function StoreProvider({ children }) {
     }
   });
 
-  // Express Backend API Base URL (Strictly read from environment variable)
+  // Express Backend API Base URL (Uses VITE_API_URL if configured, otherwise defaults to relative /api for fullstack monorepo)
   const getApiBaseUrl = () => {
     const raw = import.meta.env.VITE_API_URL;
-    if (!raw) return '';
+    if (!raw) return '/api';
     const clean = raw.trim().replace(/\/+$/, '');
     return clean.endsWith('/api') ? clean : `${clean}/api`;
   };
